@@ -6,7 +6,7 @@ interface FileSendingFormProps {
   onFileUpload: (data: FormData) => Promise<void>;
   user: { displayName: string };
 }
-
+ 
 const FileSendingForm: React.FC<FileSendingFormProps> = ({ onFileUpload, user }) => {
   const [filename, setFilename] = useState('');
   const [imageUpload, setImageUpload] = useState<FileList | null>(null);
@@ -18,10 +18,14 @@ const FileSendingForm: React.FC<FileSendingFormProps> = ({ onFileUpload, user })
 
     if (!files) return;
 
-    // Convert the FileList object to an array
-    const fileList = Array.from(files);
+    // Create a new FileList object
+    const dataTransfer = new DataTransfer();
+    for (let i = 0; i < files.length; i++) {
+      dataTransfer.items.add(files[i]);
+    }
+    const fileList = dataTransfer.files;
 
-    // Set the imageUpload state to the array of files
+    // Set the imageUpload state to the FileList
     setImageUpload(fileList);
 
     // Show image preview for the first file
