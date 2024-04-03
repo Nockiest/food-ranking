@@ -1,35 +1,35 @@
 import React from 'react'
 import "./categories.css"
 const Categories = ({
-  selectedCategory,
-  setSelectedCategory,
-  categories,
-  subCategories,
-  selectedSubCategory,
-  setSelectedSubCategory,
+  // selectedCategory,
+  // setSelectedCategory,
+  // categories,
+  // subCategories,
+  // selectedSubCategory,
+  // setSelectedSubCategory,
 }) => {
-  const handleCategoryClick = (category) => {
-    if (selectedCategory === category) {
-      setSelectedCategory(null); // Set to null if already selected
-    } else {
-      setSelectedCategory(category);
-    }
-  };
+  // const handleCategoryClick = (category) => {
+  //   if (selectedCategory === category) {
+  //     setSelectedCategory(null); // Set to null if already selected
+  //   } else {
+  //     setSelectedCategory(category);
+  //   }
+  // };
 
-  const handleSubCategoryClick = (subCategory) => {
-    if (selectedSubCategory === subCategory) {
-      setSelectedSubCategory(null); // Set to null if already selected
-    } else {
-      setSelectedSubCategory(subCategory);
-    }
-  };
+  // const handleSubCategoryClick = (subCategory) => {
+  //   if (selectedSubCategory === subCategory) {
+  //     setSelectedSubCategory(null); // Set to null if already selected
+  //   } else {
+  //     setSelectedSubCategory(subCategory);
+  //   }
+  // };
 
-  console.log('Categories:', categories);
-  console.log('Subcategories:', subCategories);
+  // console.log('Categories:', categories);
+  // console.log('Subcategories:', subCategories);
 
   return (
     <div className="categories-section">
-      <div> 
+      {/* <div>
       CATEGORY
       {categories.map((category, index) => (
         <li
@@ -52,7 +52,7 @@ const Categories = ({
           {subCategory}
         </li>
       ))}
-      </div>
+      </div> */}
     </div>
   );
 };

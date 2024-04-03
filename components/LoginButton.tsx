@@ -1,31 +1,27 @@
-import React, { useState } from "react";
-import GoogleButton from "../partials/GoogleSignInButton";
+import React, { useState,useEffect } from "react";
+// import GoogleButton from "../partials/GoogleSignInButton";
 import { signInWithGoogle, auth  } from "../firebase"; // Import User type
 import { User } from 'firebase/auth';
 import "./loginButton.css";
-
+import GoogleButton from 'react-google-button'
+import Refresher from "@/UniComponents/Refresher";
 interface LoginButtonProps {
   // user: User | null; // Use User type here
   // setUser: React.Dispatch<React.SetStateAction<User | null>>; // Update setUser type
 }
 
-const LoginButton: React.FC<LoginButtonProps> = ( ) => {
-  const user = auth.currentUser;
-  const [errorMessage, setErrorMessage] = useState<string>("");
+const LoginButton: React.FC<LoginButtonProps> = () => {
+  const [user, setUser] = useState<User | null>(auth.currentUser); // Initialize user state with current user
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleSignInWithGoogle = async () => {
-    try {
-      const result = await signInWithGoogle();
-      console.log(result);
-
-      // if (result.user) {
-      //   const { displayName, photoURL, email } = result.user;
-      //   // setUser({ displayName, photoURL, email }); // Set User type correctly
-      // }
-    } catch (error) {
-      setErrorMessage(`Error signing in with Google. ${error}`);
-    }
-  };
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user); // Update user state when authentication state changes
+    });
+    return () => {
+      unsubscribe(); // Cleanup function to unsubscribe from auth state changes
+    };
+  }, []); // Run effect only once on component mount
 
   const handleSignOut = async () => {
     try {
@@ -47,16 +43,16 @@ const LoginButton: React.FC<LoginButtonProps> = ( ) => {
   };
 
   const logginTextStyles: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: "0 auto",
-    width: "fit-content",
-    padding: "10px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "5px",
-    marginTop: "10px",
-    transition: "background-color 0.3s",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '0 auto',
+    width: 'fit-content',
+    padding: '10px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '5px',
+    marginTop: '10px',
+    transition: 'background-color 0.3s',
   };
 
   return (
@@ -64,7 +60,7 @@ const LoginButton: React.FC<LoginButtonProps> = ( ) => {
       {!user ? (
         <div>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <GoogleButton onClick={handleSignInWithGoogle} />
+          <GoogleButton onClick={signInWithGoogle} />
         </div>
       ) : (
         <button className="log-out-btn btn" onClick={handleSignOut} style={logoutButtonStyles}>
@@ -74,11 +70,14 @@ const LoginButton: React.FC<LoginButtonProps> = ( ) => {
 
       {user && (
         <p className="logged-in-text" style={logginTextStyles}>
-          Logged in as: {user.displayName}
+          Přihlášen jako: {user.displayName}
         </p>
       )}
+
     </div>
   );
 };
 
+
 export default LoginButton;
+// <Refresher refreshers={[auth.currentUser, user]} />

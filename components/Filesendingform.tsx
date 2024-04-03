@@ -1,12 +1,12 @@
 import "./fileSendingForm.css";
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-
+import Image from 'next/image'
 interface FileSendingFormProps {
   onFileUpload: (data: FormData) => Promise<void>;
   user: { displayName: string };
 }
- 
+
 const FileSendingForm: React.FC<FileSendingFormProps> = ({ onFileUpload, user }) => {
   const [filename, setFilename] = useState('');
   const [imageUpload, setImageUpload] = useState<FileList | null>(null);
@@ -87,7 +87,9 @@ const FileSendingForm: React.FC<FileSendingFormProps> = ({ onFileUpload, user })
       </div>
       <div className="img-preview">
         {imageUpload && (
-          <img className="preview-image" src="" alt="Preview" ref={imagePreviewRef} />
+          <Image className={"preview-image"} src={""} alt={"Preview"} layout={"fill"}/>
+// ref={imagePreviewRef}
+          // <img className="preview-image" src="" alt="Preview" ref={imagePreviewRef} />
         )}
       </div>
       <div>

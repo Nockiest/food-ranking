@@ -6,13 +6,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User } from 'firebase/auth';
 import { DeprecatedUser } from "./types/types";
-// Import the functions you need from the SDKs you need
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",
   authDomain: "food-ranking-d391d.firebaseapp.com",
@@ -22,7 +16,6 @@ const firebaseConfig = {
   appId: "1:629245452002:web:761033414b4d46e1b288bb",
   measurementId: "G-SZ7N4MC030"
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -39,13 +32,6 @@ const pathReference = ref(storage, 'files/Another%file_adf_OndřejLukeš hanluk@
 // Create a reference from a Google Cloud Storage URI
 const gsReference = ref(storage, 'gs://bucket/files/stars.jpg');
 
-// Create a reference from an HTTPS URL
-// Note that in the URL, characters are URL escaped!
-// const httpsReference = ref(storage, 'https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.jpg');
-
-
-// Create a reference to the file we want to download
-
 const filesRef = ref(storage, `files/hello_something_OndřejLukeš hanluk@seznam.cz_3f35f6f0-72bc-4f6d-884e-8cdd7b7b6da0_`);
 
 // Get the download URL
@@ -59,6 +45,7 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
     return null;
   }
 };
+
 export const signInWithGoogle: () => Promise<UserCredential> = () => {
   return signInWithPopup(auth, provider)
     .then((result) => {
@@ -66,15 +53,19 @@ export const signInWithGoogle: () => Promise<UserCredential> = () => {
       const name = result.user?.displayName;
       const email = result.user?.email;
       const profilePic = result.user?.photoURL;
-      console.log(name, email, profilePic);
-      localStorage.setItem("name", name || '');
-      localStorage.setItem("email", email || '');
-      localStorage.setItem("profilePic", profilePic || '');
-      return result; // Return the UserCredential object
+      // console.log(name, email, profilePic);
+      // localStorage.setItem("name", name || '');
+      // localStorage.setItem("email", email || '');
+      // localStorage.setItem("profilePic", profilePic || '');
+      if (!email || !email.endsWith('zaci.gopat.cz')) {
+        // If email domain is not valid, throw an error
+        throw new Error('Invalid email domain');
+      }
+      return result;
     })
     .catch((error) => {
       console.error("Error signing in with Google:", error);
-      throw error; // Propagate the error to the caller
+      throw error;
     });
 };
 
