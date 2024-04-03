@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 
 
 interface RefreshButtonProps {
-  refreshers: any[]; // Define the type of the refreshers prop as an array of any type
-}
+    refreshers: ReadonlyArray<unknown | (() => void) | React.DependencyList>;
+  }
 
 const Refresher: React.FC<RefreshButtonProps> = ({ refreshers }) => {
   const [refreshKey, setRefreshKey] = useState<number>(0); // Define the type of refreshKey as number

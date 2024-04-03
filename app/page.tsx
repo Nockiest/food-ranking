@@ -7,6 +7,7 @@ import Choice from '@/components/Choice';
 import Navbar from '@/components/Navbar';
 import { User } from 'firebase/auth';
 import { signInWithGoogle, auth  } from "../firebase";
+import { USER } from '@/signals';
 
 
 
@@ -15,7 +16,6 @@ export default function Home() {
   const [clicked, setClicked] = useState<boolean>(false);
   const [storedImages, setStoredImages] = useState([]);
   const [searchedTerm, setSearchedTerm] = useState('');
-  const [user, setUser] = useState<null|User>(null)
   const [categories, setCategories] = useState([])
   const [subCategories, setSubCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -24,19 +24,10 @@ export default function Home() {
     console.log(`You clicked on ${image}`);
     setClicked(true);
   };
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []); // this exist for refreshing purpouses
+
   return (
     <Container className='w-full mx-0' >
-         
-     
-      {user?  (<Grid container justifyContent="center">
+      {USER.value?  (<Grid container justifyContent="center">
         <Grid item xs={4} >
          <Choice imageURL="/test.png" name={'img1'} percentPerformance={50}  handleClick={  handleClick  }  />
          </Grid>
@@ -46,7 +37,7 @@ export default function Home() {
 
       </Grid> ): (<p>přihlašte se prosím
       </p>)}
-      
+
     </Container>
   );
 }

@@ -7,155 +7,133 @@ import { useRouter } from "next/router";
 import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
 import { Tag } from "@/types/types";
+import { foodTypes } from "@/globalValues";
+import { Paper } from "@mui/material";
+
 
 const CreateFood = () => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    // const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [imageUpload, setImageUpload] = useState<File | null>(null);
-  
-    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setSelectedCategory(event.target.value);
-    };
-  
-    // const handleTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //   const enteredTags = event.target.value.split(',').map((tag) => tag.trim());
-    //   setSelectedTags(enteredTags);
-    // };
-  
-    // const handleAddTag = () => {
-    //   if (selectedTags.length > 0 && !selectedTags.includes(selectedTags[0])) {
-    //     setSelectedTags((prevTags) => [...prevTags, selectedTags[0]]);
-    //   }
-    // };
-  
-    // const handleRemoveTag = (tag: string) => {
-    //   setSelectedTags((prevTags) => prevTags.filter((t) => t !== tag));
-    // };
-    const submitPost = async () => {
-        const postId = uuidv4();
-        const timeStamp = serverTimestamp();
-      
-        // Create the blog post document
-        const docRef = await addDoc(collection(db, 'Foods'), {
-          title,
-          description,
-          tags: [],
-          category: selectedCategory,
-          postId,
-          timeStamp,
-        });
-      
-        // Upload image if provided
-        if (imageUpload) {
-          uploadFile(postId);
-        }
-      
-        // Clear input fields
-        setTitle('');
-        setDescription('');
-        setSelectedCategory('');
-      
-        // Show alert with post contents
-        const alertMessage = `Post Title: ${title}\nPost Text: ${description}\nCategory: ${selectedCategory}\nImage ID: ${postId} `;
-        alert(`Post sent!\n\n${alertMessage}`);
-      
-        // Console log the image ID and the post ID
-        alert(`Image ID: ${postId} Post ID: ${docRef.id}`);
-      };
-      
-   
-  
-    const uploadFile = (postId: string) => {
-      const imageRef = ref(storage, `images/${postId}`);
-  
-      uploadBytes(imageRef, imageUpload as Blob).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((url) => {
-          console.log(url);
-        });
-      });
-    };
-  
-    return (
-      <div className="createPostPage">
-        <div className="cpContainer">
-          <h1>Přidat Jídlo</h1>
-          <div className="inputGp">
-            <label>Název:</label>
-            <input
-              placeholder="Title..."
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-            />
-          </div>
-          <div className="inputGp">
-            <label>Popis Jídla:  &#123;ingredience, chuť, zajímavosti &#125;</label>
-            <textarea
-              placeholder="Post..."
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-            />
-          </div>
-      
-          <div className="inputGp">
-            <label>Category:</label>
-            <select
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              <option value="">Select Category</option>
-              <option value="ChatGPT">ChatGPT</option>
-              <option value="Life">Life</option>
-              <option value="Coding">Coding</option>
-            </select>
-          </div>
-          <div className="inputGp">
-            <label>Image URL:</label>
-            <input
-              type="file"
-              onChange={(event) => {
-                setImageUpload(event.target.files ? event.target.files[0] : null);
-              }}
-            />
-          </div>
-          <button onClick={submitPost}>Submit Post</button>
-          <button className="add">
-            <Link href="/blog">Go to Blog</Link>
-          </button>
-        </div>
-      </div>
-    );
-  };
-  
-  export default CreateFood;
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [imageUpload, setImageUpload] = useState<File | null>(null);
 
-//   \nTags: ${selectedTags.join(
-//     ', '
-//   )}
-    {/* <div className="inputGp">
-            <label>Tags:</label>
-            <div className="tagsInput">
-              {selectedTags.map((tag) => (
-                <div key={tag} className="tagChip">
-                  {tag}
-                  <button
-                    className="removeTagButton"
-                    onClick={() => handleRemoveTag(tag)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-              <input
-                placeholder="Add tags..."
-                value={selectedTags.join(', ')}
-                onChange={handleTagChange}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    handleAddTag();
-                  }
-                }}
-              />
-            </div>
-          </div> */}
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCategory = event.target.value;
+    if (!selectedCategories.includes(selectedCategory)) {
+      setSelectedCategories([...selectedCategories, selectedCategory]);
+    }
+  };
+
+  const handleCategoryRemove = (category: string) => {
+    setSelectedCategories(selectedCategories.filter(c => c !== category));
+  };
+
+  const submitPost = async () => {
+    const postId = uuidv4();
+    const timeStamp = serverTimestamp();
+
+    // Create the food document
+    const docRef = await addDoc(collection(db, 'Foods'), {
+      title,
+      description,
+      tags: [],
+      categories: selectedCategories,
+      postId,
+      timeStamp,
+    });
+
+    // Upload image if provided
+    if (imageUpload) {
+      uploadFile(postId);
+    }
+
+    // Clear input fields
+    setTitle('');
+    setDescription('');
+    setSelectedCategories([]);
+
+    // Show alert with food details
+    const alertMessage = `Food Title: ${title}\nFood Description: ${description}\nCategories: ${selectedCategories.join(', ')}\nImage ID: ${postId} `;
+    alert(`Food added!\n\n${alertMessage}`);
+
+    // Console log the image ID and the food ID
+    alert(`Image ID: ${postId} Food ID: ${docRef.id}`);
+  };
+
+  const uploadFile = (postId: string) => {
+    const imageRef = ref(storage, `images/${postId}`);
+
+    uploadBytes(imageRef, imageUpload as Blob).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        console.log(url);
+      });
+    });
+  };
+
+  return (
+    <div className="flex justify-center items-center h-auto">
+      <div className="max-w-md w-full px-4">
+        <h1 className="text-3xl mb-6">Add New Food</h1>
+        <div className="mb-4">
+          <label className="block mb-2">Title:</label>
+          <input
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            placeholder="Title..."
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2">Description:</label>
+          <textarea
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            placeholder="Description..."
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block mb-2">Categories:</label>
+          <select
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            value=""
+            onChange={handleCategoryChange}
+          >
+            <option value="" disabled>Select Category</option>
+            {foodTypes.map((foodType, index) => (
+              <option key={index} value={foodType.name} style={{ backgroundColor: foodType.color }}>
+                {foodType.name}
+              </option>
+            ))}
+          </select>
+          <div>
+            {selectedCategories.map((category, index) => (
+              <div key={index} className="selectedCategory mt-2" style={{ backgroundColor: foodTypes.find(ft => ft.name === category)?.color }}>
+                <span>{category}</span>
+                <button onClick={() => handleCategoryRemove(category)} className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">Remove</button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2">Image:</label>
+          <input
+            className="w-full"
+            type="file"
+            accept=".jpg, .png, .heic, .gif, .bmp, .webp"
+            onChange={(event) => {
+              setImageUpload(event.target.files ? event.target.files[0] : null);
+            }}
+          />
+        </div>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={submitPost}>Add Food</button>
+        <button className="bg-gray-300 text-gray-800 px-4 py-2 rounded ml-2 hover:bg-gray-400">
+          <Link href="/blog">Go to Blog</Link>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CreateFood;

@@ -5,7 +5,7 @@ import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, D
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
- 
+import { USER } from "./signals";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",
@@ -57,7 +57,7 @@ export const signInWithGoogle: () => Promise<UserCredential> = () => {
 
   return signInWithPopup(auth, provider)
     .then((result) => {
-      console.log(result, "xyz");
+      // console.log(result, "xyz");
       const name = result.user?.displayName;
       const email = result.user?.email;
       const profilePic = result.user?.photoURL;
@@ -75,48 +75,16 @@ export const signInWithGoogle: () => Promise<UserCredential> = () => {
 };
 
 
-export const getUserAuthentication = async () => {
-  try {
-    const user = await new Promise((resolve, reject) => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        unsubscribe();
-        resolve(user);
-      }, reject);
-    });
-    return user as  User | null;
-  } catch (error) {
-    console.error("Error getting user authentication:", error);
-    return null;
-  }
-};
 
-export const checkUserAccess = async () => {
-  try {
-    const user = await getUserAuthentication();
-    if (user) {
-      const userEmail = user.email;
-      if (userEmail === 'hanluk@seznam.cz') {
-        console.log('User has access to the Firebase database');
-        return true;
-      } else {
-        console.log('User does not have access to the Firebase database');
-        return false;
-      }
-    } else {
-      console.log('No user is signed in');
-      return false;
-    }
-  } catch (error) {
-    console.error("Error checking user access:", error);
-    return false;
-  }
-};
 
 auth.onAuthStateChanged((user) => {
+
   if (user) {
+    USER.value = user
     console.log('User is signed in:', user);
   } else {
-    console.log('User has signed out');
+    console.log('User has signed out', user);
+    USER.value = null
   }
 });
 
@@ -131,7 +99,42 @@ export const fetchFoods = async (): Promise<DocumentData[]> => {
     return [];
   }
 };
+// export const getUserAuthentication = async () => {
+//   try {
+//     const user = await new Promise((resolve, reject) => {
+//       const unsubscribe = auth.onAuthStateChanged((user) => {
+//         unsubscribe();
+//         resolve(user);
+//       }, reject);
+//     });
+//     return user as  User | null;
+//   } catch (error) {
+//     console.error("Error getting user authentication:", error);
+//     return null;
+//   }
+// };
 
+// export const checkUserAccess = async () => {
+//   try {
+//     const user = await getUserAuthentication();
+//     if (user) {
+//       const userEmail = user.email;
+//       if (userEmail === 'hanluk@seznam.cz') {
+//         console.log('User has access to the Firebase database');
+//         return true;
+//       } else {
+//         console.log('User does not have access to the Firebase database');
+//         return false;
+//       }
+//     } else {
+//       console.log('No user is signed in');
+//       return false;
+//     }
+//   } catch (error) {
+//     console.error("Error checking user access:", error);
+//     return false;
+//   }
+// };
 // export const subscribeToBlogPosts = (db, setPostList) => {
 //   const colRef = collection(db, 'BlogPosts');
 
@@ -173,7 +176,7 @@ export const fetchFoods = async (): Promise<DocumentData[]> => {
 //   }
 // };
 
- 
+
 
 // export const updateBlogPost = async (postId, fieldToUpdate, newValue) => {
 //   try {

@@ -6,7 +6,8 @@ import { User } from 'firebase/auth';
 import "./loginButton.css";
 import GoogleButton from 'react-google-button'
 import Refresher from "@/UniComponents/Refresher";
- 
+import { USER } from "@/signals";
+
 
 interface LoginButtonProps {}
 
@@ -27,6 +28,7 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
     try {
       localStorage.clear();
       window.location.reload();
+
       await auth.signOut();
     } catch (error) {
       console.error('Error signing out:', error);
@@ -35,10 +37,10 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
 
   return (
     <div className="loginSection">
-      {!user ? (
+      {!USER.value ? (
         <div>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <GoogleButton onClick={signInWithGoogle} />
+          <GoogleButton  label='Přihlášení' onClick={signInWithGoogle} />
         </div>
       ) : (
         <button className="bg-white text-black rounded-md px-4 py-2" onClick={handleSignOut}>
@@ -46,9 +48,9 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
         </button>
       )}
 
-      {user && (
+      {USER.value && (
         <p className="text-center bg-gray-200 rounded-md p-2 mt-2">
-          Přihlášen jako: {user.displayName}
+          Přihlášen jako: {USER.value?.displayName}
         </p>
       )}
     </div>
