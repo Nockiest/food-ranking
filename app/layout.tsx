@@ -4,6 +4,7 @@ import "./globals.css";
 import theme from "@/theme/theme";
 import { ThemeProvider, createTheme } from "@mui/material";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={	{width:'100vw'}} className={inter.className}>
         <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <Footer />
       </body>
     </html>
   );

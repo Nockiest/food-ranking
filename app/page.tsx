@@ -32,15 +32,6 @@ export default function Home() {
       unsubscribe();
     };
   }, []); // this exist for refreshing purpouses
-  // useEffect(() => {
-  //   // fetchImages();
-  //   const storedUserName = localStorage.getItem('name');
-  //   const storedEmail = localStorage.getItem('email');
-  //   const storedProfilePic = localStorage.getItem('profilePic');
-  //   if (storedUserName && storedProfilePic && storedEmail) {
-  //     // setUser({ displayName: storedUserName, photoURL: storedProfilePic, email: storedEmail });
-  //   }
-  // }, []);
   return (
     <Container className='w-full mx-0' >
         <Navbar     />

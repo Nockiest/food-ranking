@@ -1,15 +1,10 @@
-export type DeprecatedUser =  {
-      displayName: string;
-      photoURL: string;
-      email: string;
-    }
-
 export type Food = {
   name: string
-  percentRating: number
-  imgFirebaseURL: string
+  percentRating: Percent
+  imgFirebaseURL?: string
   id: string
   numAppeardInVote: number
+  otherFoodBilance: {food:Food, bilance: number}[]
 }
 
 export type Voter = {

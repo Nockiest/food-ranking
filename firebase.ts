@@ -5,7 +5,7 @@ import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, D
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
-import { DeprecatedUser } from "./types/types";
+ 
 
 const firebaseConfig = {
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",

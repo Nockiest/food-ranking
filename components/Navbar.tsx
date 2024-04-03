@@ -1,17 +1,11 @@
 import LoginButton from './LoginButton';
 import foodIcon from '../svg/food.svg';
-// import "./Navbar.css";
 import { User } from 'firebase/auth';
 import Image from 'next/image';
 
 
 
-interface NavbarProps {
-//   user: User | null;
-//   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}
-
-const Navbar: React.FC< NavbarProps> = () => {
+const Navbar  = () => {
   return (
     <nav className="navbar">
       <Image src={foodIcon} alt="Cloud Icon" />
