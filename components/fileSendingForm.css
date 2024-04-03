@@ -1,4 +1,4 @@
-@import "../variables.css"; 
+@import "../variables.css";
 
 .input-field-row {
   display: flex;
@@ -9,24 +9,22 @@
   align-items: flex-start;
   /* gap: 38px; */
 }
-  
+
 
   .input-field-row {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .input-field {
     min-width: 300px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
-  .input-field label {
-    /* margin-right: 10px; */
-  }
+
+ 
 
   .input-field input {
    height:24px;
@@ -54,4 +52,3 @@
     align-items: center;
     gap: 38px;
   }
- 

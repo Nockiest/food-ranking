@@ -1,6 +1,6 @@
 import LoginButton from './LoginButton';
 import foodIcon from '../svg/food.svg';
-import "./Navbar.css";
+// import "./Navbar.css";
 import { User } from 'firebase/auth';
 import Image from 'next/image';
 

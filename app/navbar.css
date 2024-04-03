@@ -1,34 +1,35 @@
-@import "../variables.css";
-
+/* @import "../variables.css"; */
+/*
 .navbar {
-  @apply flex items-center justify-between sticky top-0 border border-gray-300 shadow-md z-50 px-8 py-2 bg-white;
+  @apply flex   items-center justify-between sticky top-0 border border-gray-300 shadow-md z-50   py-2 bg-white;
 }
 
 h1 {
   @apply absolute left-1/2 transform -translate-x-1/2 text-center border-6 border-black py-4 px-8 rounded-2xl border-primary-color font-bold;
 }
 
-img {
-  @apply h-14 w-14 text-primary-color;
-}
+
 
 @media (max-width: 800px) {
   h1 {
     @apply hidden;
   }
-}
+} */
 
-/* .navbar {
+.navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0;
+    left: 0;
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding:  8px 64px;
     background-color: white;
+    width: 100%;
+    margin: 0
   }
 
   h1 {
@@ -55,4 +56,4 @@ img {
     h1 {
       display: none;
     }
-  } */
+  }

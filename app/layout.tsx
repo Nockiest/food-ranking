@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import theme from "@/theme/theme";
-import { ThemeProvider, createTheme} from "@mui/material"
+import { ThemeProvider, createTheme } from "@mui/material";
 import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}   >
-        <ThemeProvider theme={theme}>
-      
-        {children}
-        </ThemeProvider>
-        </body>
+      <body style={	{width:'100vw'}} className={inter.className}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

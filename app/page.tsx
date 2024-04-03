@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Choice from '@/components/Choice';
 import Navbar from '@/components/Navbar';
 import { User } from 'firebase/auth';
-
+import { signInWithGoogle, auth  } from "../firebase";
 
 
 
@@ -25,18 +25,27 @@ export default function Home() {
     setClicked(true);
   };
   useEffect(() => {
-    // fetchImages();
-    const storedUserName = localStorage.getItem('name');
-    const storedEmail = localStorage.getItem('email');
-    const storedProfilePic = localStorage.getItem('profilePic');
-    if (storedUserName && storedProfilePic && storedEmail) {
-      // setUser({ displayName: storedUserName, photoURL: storedProfilePic, email: storedEmail });
-    }
-  }, []);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []); // this exist for refreshing purpouses
+  // useEffect(() => {
+  //   // fetchImages();
+  //   const storedUserName = localStorage.getItem('name');
+  //   const storedEmail = localStorage.getItem('email');
+  //   const storedProfilePic = localStorage.getItem('profilePic');
+  //   if (storedUserName && storedProfilePic && storedEmail) {
+  //     // setUser({ displayName: storedUserName, photoURL: storedProfilePic, email: storedEmail });
+  //   }
+  // }, []);
   return (
-    <Container>
+    <Container className='w-full mx-0' >
         <Navbar     />
-      <Grid container justifyContent="center">
+      <>
+      {user?  (<Grid container justifyContent="center">
         <Grid item xs={4} >
          <Choice imageURL="/test.png" name={'img1'} percentPerformance={50}  handleClick={  handleClick  }  />
          </Grid>
@@ -44,7 +53,9 @@ export default function Home() {
          <Choice imageURL="/mil.jpeg"  name={'img2'} percentPerformance={50}  handleClick={  handleClick  }  />
          </Grid>
 
-      </Grid>
+      </Grid> ): (<p>přihlašte se prosím
+      </p>)}
+      </>
     </Container>
   );
 }

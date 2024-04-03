@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, DocumentData, QuerySnapshot, getDocs} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
-import { User } from 'firebase/auth';
+import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
 import { DeprecatedUser } from "./types/types";
 
 const firebaseConfig = {
@@ -46,20 +46,25 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
   }
 };
 
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    console.log("Session persistence set successfully");
+  })
+  .catch((error) => {
+    console.error("Error setting session persistence:", error);
+  });
 export const signInWithGoogle: () => Promise<UserCredential> = () => {
+
   return signInWithPopup(auth, provider)
     .then((result) => {
       console.log(result, "xyz");
       const name = result.user?.displayName;
       const email = result.user?.email;
       const profilePic = result.user?.photoURL;
-      // console.log(name, email, profilePic);
-      // localStorage.setItem("name", name || '');
-      // localStorage.setItem("email", email || '');
-      // localStorage.setItem("profilePic", profilePic || '');
       if (!email || !email.endsWith('zaci.gopat.cz')) {
         // If email domain is not valid, throw an error
-        throw new Error('Invalid email domain');
+        auth.signOut()
+        throw new Error('Přihlašte se účtem gymnázia Opatov');
       }
       return result;
     })
