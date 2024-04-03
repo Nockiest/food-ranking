@@ -120,7 +120,7 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-export const fetchPosts = async (): Promise<DocumentData[]> => {
+export const fetchFoods = async (): Promise<DocumentData[]> => {
   try {
     const colRef = collection(db, 'Foods');
     const snapshot: QuerySnapshot<DocumentData> = await getDocs(colRef);
@@ -131,3 +131,77 @@ export const fetchPosts = async (): Promise<DocumentData[]> => {
     return [];
   }
 };
+
+// export const subscribeToBlogPosts = (db, setPostList) => {
+//   const colRef = collection(db, 'BlogPosts');
+
+//   const unsubscribe = onSnapshot(colRef, (snapshot) => {
+//     const postsData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+//     setPostList(postsData);
+//     console.log(postsData, 'posts');
+//   });
+
+//   return unsubscribe;
+// };
+
+
+// export const updateDbComments = async (postId, fieldToUpdate, newValue, parameterIsArray = true) => {
+//   console.log(postId, fieldToUpdate, newValue);
+
+//   try {
+//     const docRef = doc(db, 'Foods', postId);
+//     console.log(docRef);
+//     const docSnapshot = await getDoc(docRef);
+//     console.log(docSnapshot);
+
+//     if (docSnapshot.exists()) {
+//       const existingData = docSnapshot.data();
+//       let updatedData = { ...existingData }; // Create a copy of existingData
+
+//       if (parameterIsArray && Array.isArray(newValue)) {
+//         // If the field is an array and parameterIsArray is true, set the new value directly
+//         updatedData[fieldToUpdate] = newValue;
+//       }
+
+//       await updateDoc(docRef, updatedData);
+//       console.log('Blog post updated successfully!');
+//     } else {
+//       console.log('Blog post does not exist.');
+//     }
+//   } catch (error) {
+//     console.error('Error updating blog post:', error);
+//   }
+// };
+
+ 
+
+// export const updateBlogPost = async (postId, fieldToUpdate, newValue) => {
+//   try {
+//     const postRef = db.collection('BlogPosts').doc(postId);
+//     await postRef.update({
+//       [fieldToUpdate]: newValue
+//     });
+//     console.log('Blog post updated successfully!');
+//   } catch (error) {
+//     console.error('Error updating blog post:', error);
+//   }
+// };
+// const postId = 'd38b0bed-485a-4d8a-9c5d-63a0346c9b60'; // Replace with the actual ID of the document you want to update
+// const fieldToUpdate = 'title'; // Replace with the specific field/key you want to update
+// const newValue = 'Updated Title'; // Replace with the new value for the specified field
+
+// updateBlogPost(postId, fieldToUpdate, newValue);
+
+
+// updateForm.addEventListener('submit', (e) => {
+//   e.preventDefault()
+
+//   let docRef = doc(db, 'BlogPosts', postId)
+
+//   updateDoc(docRef, {
+//     title: 'updated title'
+//   })
+//   .then(() => {
+//     updateForm.reset()
+//   })
+// })

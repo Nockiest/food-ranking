@@ -20,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={	{width:'100vw'}} className={inter.className}>
+      <Navbar     />
         <ThemeProvider theme={theme}>{children}</ThemeProvider>
         <Footer />
       </body>

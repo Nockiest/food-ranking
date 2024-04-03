@@ -1,8 +1,11 @@
+import CreateFood from '@/components/CreateFood'
 import React from 'react'
 
 const AddFood = () => {
   return (
-    <div>AddFood</div>
+    <div>
+      <CreateFood />
+    </div>
   )
 }
 

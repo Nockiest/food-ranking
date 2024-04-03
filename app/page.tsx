@@ -34,8 +34,8 @@ export default function Home() {
   }, []); // this exist for refreshing purpouses
   return (
     <Container className='w-full mx-0' >
-        <Navbar     />
-      <>
+         
+     
       {user?  (<Grid container justifyContent="center">
         <Grid item xs={4} >
          <Choice imageURL="/test.png" name={'img1'} percentPerformance={50}  handleClick={  handleClick  }  />
@@ -46,7 +46,7 @@ export default function Home() {
 
       </Grid> ): (<p>přihlašte se prosím
       </p>)}
-      </>
+      
     </Container>
   );
 }

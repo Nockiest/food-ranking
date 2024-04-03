@@ -1,3 +1,4 @@
+'use client'
 import React, { useState,useEffect } from "react";
 // import GoogleButton from "../partials/GoogleSignInButton";
 import { signInWithGoogle, auth  } from "../firebase"; // Import User type

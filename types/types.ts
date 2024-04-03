@@ -1,12 +1,20 @@
+import { CSSProperties } from "react"
+
 export type Food = {
   name: string
+  description: string
   percentRating: Percent
   imgFirebaseURL?: string
   id: string
   numAppeardInVote: number
   otherFoodBilance: {food:Food, bilance: number}[]
+  tags: Tag[]
 }
 
+export type Tag = { 
+  name:string
+  color: CSSProperties['color'];
+}
 export type Voter = {
   name: string
   votes: number
