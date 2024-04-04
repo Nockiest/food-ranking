@@ -1,10 +1,15 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 
-
+// Define a type guard function to check if a value is a React.DependencyList
+function isDependencyList(value: any): value is React.DependencyList {
+  return Array.isArray(value) &&
+    value.every(item => typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean' || item === null || typeof item === 'undefined');
+}
 
 interface RefreshButtonProps {
-    refreshers: ReadonlyArray<unknown | (() => void) | React.DependencyList>;
-  }
+  refreshers: ReadonlyArray<unknown | (() => void) | React.DependencyList>;
+}
 
 const Refresher: React.FC<RefreshButtonProps> = ({ refreshers }) => {
   const [refreshKey, setRefreshKey] = useState<number>(0); // Define the type of refreshKey as number
@@ -16,7 +21,7 @@ const Refresher: React.FC<RefreshButtonProps> = ({ refreshers }) => {
 
   useEffect(() => {
     handleRefresh();
-  }, [...refreshers]);
+  }, refreshers.filter(isDependencyList) as React.DependencyList); // Filter out only the values that are of type React.DependencyList
 
   return (
     <div>

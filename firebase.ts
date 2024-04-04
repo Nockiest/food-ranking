@@ -6,6 +6,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
 import { USER } from "./signals";
+import { Food } from "./types/types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",
@@ -23,7 +24,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const storage = getStorage();
-const colRef = collection(db, 'files');
+const colRef = collection(db, 'Foods');
 export { db,colRef, auth, provider, storage };
 // Create a reference with an initial file path and name
 
@@ -32,7 +33,7 @@ const pathReference = ref(storage, 'files/Another%file_adf_OndřejLukeš hanluk@
 // Create a reference from a Google Cloud Storage URI
 const gsReference = ref(storage, 'gs://bucket/files/stars.jpg');
 
-const filesRef = ref(storage, `files/hello_something_OndřejLukeš hanluk@seznam.cz_3f35f6f0-72bc-4f6d-884e-8cdd7b7b6da0_`);
+// const filesRef = ref(storage, `files/hello_something_OndřejLukeš hanluk@seznam.cz_3f35f6f0-72bc-4f6d-884e-8cdd7b7b6da0_`);
 
 // Get the download URL
 export const downloadURLFinder = async (storageRef: StorageReference): Promise<string | null> => {
@@ -88,12 +89,12 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-export const fetchFoods = async (): Promise<DocumentData[]> => {
+export const fetchFoods = async (): Promise<Food[]> => {
   try {
     const colRef = collection(db, 'Foods');
     const snapshot: QuerySnapshot<DocumentData> = await getDocs(colRef);
-    const postsData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    return postsData;
+    const foods = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    return foods as Food[];
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];

@@ -17,3 +17,4 @@ export const foodTypes = [
     { name: "Sýrové", color: "yellow" },
     { name: "Rýžové", color: "gray" },
   ];
+
