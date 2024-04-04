@@ -18,6 +18,7 @@ const CreateFood = () => {
   const [description, setDescription] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [imageUpload, setImageUpload] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -75,10 +76,33 @@ const CreateFood = () => {
       });
     });
   };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const selectedImage = event.target.files[0];
+      setImageUpload(selectedImage);
+
+      // Read the selected image as a data URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setImagePreview(reader.result);
+        }
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+  };
   // keep all czech descriptions in czech
   return (
     <div className="flex h-full justify-center align-center items-center  ">
-      <div className="max-w-md mt-8 w-full h-full flex flex-col justify-center align-center  px-4">
+      <div className='flex flex-row' >
+        <div className="w-24 h-24 border-black">
+
+        {imagePreview && (
+            <Image width={100} height={100} src={imagePreview} alt="Image Preview" className="mt-2  " />
+          )}
+        </div>
+        <div className="max-w-md mt-4 w-full   flex flex-col justify-center align-center  px-4">
         <h1 className="text-3xl mb-6">Přidat Oběd</h1>
         <div className="mb-4">
           <label className="block mb-2">Název:</label>
@@ -146,22 +170,22 @@ const CreateFood = () => {
             className="w-full"
             type="file"
             accept=".jpg, .png, .heic, .gif, .bmp, .webp"
-            onChange={(event) => {
-              setImageUpload(event.target.files ? event.target.files[0] : null);
-            }}
+            onChange={handleImageChange}
           />
+
         </div>
-        <div>
+        <div className="flex">
         <button className="btn-primary flex items-center" onClick={submitPost}>
-  <Image src={plusIcon} alt="plus" className="h-8 w-auto" />
-  <span className="ml-2">Přidat Oběd</span>
-</button>
+          <Image src={plusIcon} alt="plus" className="h-8 w-auto" />
+          <span className="ml-2">Přidat Oběd</span>
+        </button>
 
           <button className="bg-gray-300 text-gray-800 px-4 py-2 rounded ml-2 hover:bg-gray-400">
             <Link href="/blog">Na Hlavní Stránku</Link>
           </button>
         </div>
       </div>
+        </div>
     </div>
   );
 };
