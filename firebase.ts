@@ -79,7 +79,6 @@ export const signInWithGoogle: () => Promise<UserCredential> = () => {
 
 
 auth.onAuthStateChanged((user) => {
-
   if (user) {
     USER.value = user
     console.log('User is signed in:', user);
@@ -100,20 +99,20 @@ export const fetchFoods = async (): Promise<Food[]> => {
     return [];
   }
 };
-// export const getUserAuthentication = async () => {
-//   try {
-//     const user = await new Promise((resolve, reject) => {
-//       const unsubscribe = auth.onAuthStateChanged((user) => {
-//         unsubscribe();
-//         resolve(user);
-//       }, reject);
-//     });
-//     return user as  User | null;
-//   } catch (error) {
-//     console.error("Error getting user authentication:", error);
-//     return null;
-//   }
-// };
+export const getUserAuthentication = async () => {
+  try {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        unsubscribe();
+        resolve(user);
+      }, reject);
+    });
+    return user as  User  ;
+  } catch (error) {
+    console.error("Error getting user authentication:", error);
+    return null;
+  }
+};
 
 // export const checkUserAccess = async () => {
 //   try {

@@ -1,59 +1,91 @@
 "use client";
-import { fetchFoods } from "@/firebase";
+import { fetchFoods, getUserAuthentication } from "@/firebase";
 import { Foods, USER } from "@/signals";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
 import { chooseRandomArrayValue } from "@/utils";
+import { Food } from "@/types/types";
 
 const Chooser = () => {
+  const [rivalFoods, setRivalFoods] = useState<
+    [Food | undefined, Food | undefined]
+  >([undefined, undefined]);
+
+  const getNewFoods = () => {
+    const food = chooseRandomArrayValue(Foods.value);
+    const food2 = chooseRandomArrayValue(Foods.value);
+    setRivalFoods([food, food2]);
+    console.log(food);
+
+  }
   const handleClick = (image: string) => {
     console.log(`You clicked on ${image}`);
-    const food = chooseRandomArrayValue(Foods.value)
-    console.log(food)
+    getNewFoods()
+
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        Foods.value = await fetchFoods();
-        console.log("Data fetched successfully:", Foods.value);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    getNewFoods()
+    // const fetchData = async () => {
+    //   try {
+    //     Foods.value = await fetchFoods();
+    //     console.log("Data fetched successfully:", Foods.value);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
 
-    fetchData();
-  }, []);
+    // fetchData();
+  }, [Foods.value]);
 
+  if (!USER.value){
+
+    return  <p>přihlašte se prosím</p>
+  }
   return (
     <Container className="w-full mx-0">
-      {USER.value ? (
-        <Grid container justifyContent="center">
-          <Grid item xs={4}>
-            <Choice
-              imageURL="/test.png"
-              name={"img1"}
-              percentPerformance={50}
-              handleClick={handleClick}
-            />
+      {/* <p> {Foods.value[0]?.description}</p> */}
+      <p>{rivalFoods[0]?.id}</p>
+      <p>{Foods.value[0]?.description}</p>
+
+      {  Foods.value[0]?.description && rivalFoods[0]?.id ? (
+        <Grid item xs={4}>
+        {  rivalFoods.map((food, index) => (
+          <Grid item xs={4} key={index}>
+            {food && (
+              <Choice
+                imageURL={food.imgFirebaseURL || ""}
+                name={food.name}
+                percentPerformance={food.percentRating}
+                handleClick={handleClick}
+              />
+            )}
           </Grid>
-          <Grid item xs={4}>
-            <Choice
-              imageURL="/mil.jpeg"
-              name={"img2"}
-              percentPerformance={50}
-              handleClick={handleClick}
-            />
-          </Grid>
+        ))}
         </Grid>
       ) : (
-        <p>
-          přihlašte se prosím <span>{USER.value}</span> x
-        </p>
+        <p>Počkejte na zpracování</p>
       )}
     </Container>
   );
 };
 
 export default Chooser;
+//   <Grid item xs={4}>
+//     <Choice
+//       imageURL="/test.png"
+//       name={"img1"}
+//       percentPerformance={50}
+//       handleClick={handleClick}
+//     />
+//   </Grid>
+//   <Grid item xs={4}>
+//     <Choice
+//       imageURL="/mil.jpeg"
+//       name={"img2"}
+//       percentPerformance={50}
+//       handleClick={handleClick}
+//     />
+//   </Grid>
+// </Grid>

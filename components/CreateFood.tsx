@@ -43,7 +43,7 @@ const CreateFood = () => {
       description,
       tags: [],
       categories: selectedCategories,
-      postId,
+      id:postId,
       timeStamp,
     });
 
