@@ -1,11 +1,11 @@
 import CreateFood from "@/components/CreateFood";
-import { USER } from "@/signals";
-import React from "react";
 import "../globals.css";
+import { useAuth } from "../context";
 const AddFood = () => {
+    const {userLoggedIn} = useAuth()
   return (
     <>
-      {USER.value ? (
+      {!userLoggedIn ? (
         <p>Přihlaš se, abys mohl přidávat obash</p>
       ) : (
         <CreateFood />

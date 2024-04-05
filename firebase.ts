@@ -5,7 +5,7 @@ import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, D
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
-import { USER } from "./signals";
+
 import { Food } from "./types/types";
 
 const firebaseConfig = {
@@ -47,13 +47,13 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
   }
 };
 
-setPersistence(auth, browserSessionPersistence)
-  .then(() => {
-    console.log("Session persistence set successfully");
-  })
-  .catch((error) => {
-    console.error("Error setting session persistence:", error);
-  });
+// setPersistence(auth, browserSessionPersistence)
+//   .then(() => {
+//     console.log("Session persistence set successfully");
+//   })
+//   .catch((error) => {
+//     console.error("Error setting session persistence:", error);
+//   });
 export const signInWithGoogle: () => Promise<UserCredential> = () => {
 
   return signInWithPopup(auth, provider)
@@ -76,15 +76,13 @@ export const signInWithGoogle: () => Promise<UserCredential> = () => {
 };
 
 
-
-
 auth.onAuthStateChanged((user) => {
   if (user) {
-    USER.value = user
-    console.log('User is signed in:', user);
+    // USER.value = user
+    console.log('User is signed in:',  );
   } else {
-    console.log('User has signed out', user);
-    USER.value = null
+    console.log('User has signed out',  );
+    // USER.value = null
   }
 });
 
