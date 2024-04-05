@@ -1,6 +1,6 @@
 import CreateFood from "@/components/CreateFood";
 import "../globals.css";
-import { useAuth } from "../context";
+import { useAuth } from "../authContext";
 const AddFood = () => {
     const {userLoggedIn} = useAuth()
   return (

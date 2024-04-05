@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 
 import { Container, Grid, Paper,Theme, makeStyles } from '@mui/material';
@@ -7,22 +7,30 @@ import Choice from '@/components/Choice';
 import Navbar from '@/components/Navbar';
 import { User } from 'firebase/auth';
 import {   getUserAuthentication  } from "../firebase";
-import { Foods, USER } from '@/signals';
+// import { Foods } from '@/signals';
 import Refresher from '@/UniComponents/Refresher';
 import Chooser from '@/components/Chooser';
-import { useEffect } from 'react';
-import { AuthProvider } from './context';
+import { useEffect, useState } from 'react';
+import { AuthProvider } from './authContext';
+import { FoodsProvider } from './foodContext';
 
 
 
 export default function Home() {
-
-
+  // const [key,setKey] = useState(1)
+  //  useEffect(()=> {
+  //   setKey(Math.random())
+  //   console.log('val changed')
+  //  }, [Foods.value])
 
     return (
       <AuthProvider> {/* Wrap your component tree with AuthProvider */}
-        <Chooser />
-        <Refresher refreshers={[Foods.value, ]} />
+      <FoodsProvider>
+
+      <Chooser   />
+
+      </FoodsProvider>
+        {/* <Refresher refreshers={[Foods.value, ]} /> */}
       </AuthProvider>
     );
 }

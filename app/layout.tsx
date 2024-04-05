@@ -5,7 +5,7 @@ import theme from "@/theme/theme";
 import { ThemeProvider, createTheme } from "@mui/material";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "./context";
+import { AuthProvider } from "./authContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

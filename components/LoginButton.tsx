@@ -8,7 +8,7 @@ import GoogleButton from "react-google-button";
 import Refresher from "@/UniComponents/Refresher";
 // import { USER } from "@/signals";
 import Image from "next/image";
-import { useAuth } from "@/app/context";
+import { useAuth } from "@/app/authContext";
 // import  circlePlaceholder  from '../svg/circle-dashed.svg'
 interface LoginButtonProps {}
 

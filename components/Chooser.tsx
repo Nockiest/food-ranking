@@ -1,76 +1,66 @@
 "use client";
 import { fetchFoods, getUserAuthentication } from "@/firebase";
-import { Foods,  } from "@/signals";
+// import { Foods,  } from "@/signals";
 import { useEffect, useState } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
 import { chooseRandomArrayValue } from "@/utils";
 import { Food } from "@/types/types";
-import { useAuth } from "@/app/context";
+import { useAuth } from "@/app/authContext";
+import { useFood } from "@/app/foodContext";
+import { effect } from "@preact/signals";
 
 const Chooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
     [Food | undefined, Food | undefined]
   >([undefined, undefined]);
-  const {userLoggedIn} = useAuth()
+  const { userLoggedIn } = useAuth();
+  const { Foods } = useFood();
   const getNewFoods = () => {
-    const food = chooseRandomArrayValue(Foods.value);
-    const food2 = chooseRandomArrayValue(Foods.value);
-    setRivalFoods([food, food2]);
-    console.log(food);
-
-  }
+    if (Foods.value) {
+      const food = chooseRandomArrayValue(Foods.value);
+      const food2 = chooseRandomArrayValue(Foods.value);
+      setRivalFoods([food, food2]);
+      console.log(food);
+    }
+  };
   const handleClick = (image: string) => {
     console.log(`You clicked on ${image}`);
-    getNewFoods()
-
+    getNewFoods();
   };
-
-  useEffect(() => {
-    getNewFoods()
-    const setFoods = async () => {
-        console.log('fetching')
-     const foods = await fetchFoods()
-     return foods
-    }
-
-    setFoods()
-  }, [ ]);
-
-  if (!userLoggedIn){
-
-    return  <p>přihlašte se prosím</p>
-  } else if (!Foods.value[0]?.id) {
+  effect(() => console.log(Foods.value))
+  if (!userLoggedIn) {
+    return <p>přihlašte se prosím</p>;
+  } else if ( Foods .value?.length == 0) {
     return (
       <div>
-        {Foods.value.map((food) => (
+        {Foods?.value?.map((food) => (
           <p key={food.id}>{food.id}</p>
         ))}
-        <p>počkejte na načtení obědů</p>
+        <p>počkejte na načtení obědů   </p>
       </div>
     );
   }
 
   return (
     <Container className="w-full mx-0">
-      {/* <p> {Foods.value[0]?.description}</p> */}
       <p>{rivalFoods[0]?.id}</p>
-      <p>{Foods.value[0]?.description}</p>
+      {/* <p>{Foods.value[0]?.description}</p> */}
 
-      {  rivalFoods[0]?.id ? (
+      {rivalFoods[0]?.id ? (
         <Grid item xs={4}>
-        {  rivalFoods.map((food, index) => (
-          <Grid item xs={4} key={index}>
-            {food && (
-              <Choice
-                imageURL={food.imgFirebaseURL || ""}
-                name={food.name}
-                percentPerformance={food.percentRating}
-                handleClick={handleClick}
-              />
-            )}
-          </Grid>
-        ))}
+          {rivalFoods.map((food, index) => (
+            <Grid item xs={4} key={index}>
+              {food && (
+                <Choice
+                  imageURL={food.imgFirebaseURL || ""}
+                  name={food.name}
+                  percentPerformance={food.percentRating}
+                  handleClick={handleClick}
+                />
+              )}
+            </Grid>
+          ))}
         </Grid>
       ) : (
         <button onClick={() => getNewFoods()}>Začít vybírat</button>
