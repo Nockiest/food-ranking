@@ -15,11 +15,12 @@ function Choice({
   percentPerformance,
 }: ChoiceProps) {
   return (
+    
     <Paper
       className="m-2 p-2 flex flex-col items-start justify-center  cursor-pointer hover:shadow-lg"
       onClick={() => handleClick(name)}
     >
-      <div className={"w-full h-60"} style={{ position: "relative" }}>
+      <div className={"w-60 h-60"} style={{ position: "relative" }}>
         <Image
           src={imageURL}
           alt={name}

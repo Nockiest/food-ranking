@@ -1,6 +1,5 @@
 "use client";
 import { fetchFoods, getUserAuthentication } from "@/firebase";
-// import { Foods,  } from "@/signals";
 import { useEffect, useState } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
@@ -28,42 +27,42 @@ const Chooser = () => {
     console.log(`You clicked on ${image}`);
     getNewFoods();
   };
-  effect(() => console.log(Foods.value))
+  effect(() => console.log(Foods.value));
   if (!userLoggedIn) {
     return <p>přihlašte se prosím</p>;
-  } else if ( Foods .value?.length == 0) {
-    return (
-      <div>
-        {Foods?.value?.map((food) => (
-          <p key={food.id}>{food.id}</p>
-        ))}
-        <p>počkejte na načtení obědů   </p>
-      </div>
-    );
+  }
+  if (Foods.value?.length == 0) {
+    return <p>počkejte na načtení obědů </p>;
   }
 
   return (
     <Container className="w-full mx-0">
       <p>{rivalFoods[0]?.id}</p>
-      {/* <p>{Foods.value[0]?.description}</p> */}
-
-      {rivalFoods[0]?.id ? (
-        <Grid item xs={4}>
+      {rivalFoods[0] !== null && rivalFoods[1] !== null ? (
+        <Grid
+          direction="row"
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 4, sm: 8, md: 12 }}
+          item
+          xs={4}
+        >
           {rivalFoods.map((food, index) => (
             <Grid item xs={4} key={index}>
-              {food && (
+              {/* {food && ( */}
                 <Choice
-                  imageURL={food.imgFirebaseURL || ""}
-                  name={food.name}
-                  percentPerformance={food.percentRating}
+                  imageURL={food? food.imgFirebaseURL : ""}
+                  name={food? food.name:''}
+                  percentPerformance={food? food.percentRating : 0}
                   handleClick={handleClick}
                 />
-              )}
+              {/* )} */}
             </Grid>
           ))}
         </Grid>
       ) : (
-        <button onClick={() => getNewFoods()}>Začít vybírat</button>
+        <button className="btn-primary" onClick={() => getNewFoods()}>
+          Začít vybírat
+        </button>
       )}
     </Container>
   );

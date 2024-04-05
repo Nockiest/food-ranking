@@ -17,11 +17,7 @@ import { FoodsProvider } from './foodContext';
 
 
 export default function Home() {
-  // const [key,setKey] = useState(1)
-  //  useEffect(()=> {
-  //   setKey(Math.random())
-  //   console.log('val changed')
-  //  }, [Foods.value])
+  // con
 
     return (
       <AuthProvider> {/* Wrap your component tree with AuthProvider */}
