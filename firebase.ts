@@ -1,7 +1,7 @@
 
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, DocumentData, QuerySnapshot, getDocs} from "firebase/firestore";
+import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, DocumentData, QuerySnapshot, getDocs, setDoc} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
@@ -33,8 +33,6 @@ const pathReference = ref(storage, 'files/Another%file_adf_OndřejLukeš hanluk@
 // Create a reference from a Google Cloud Storage URI
 const gsReference = ref(storage, 'gs://bucket/files/stars.jpg');
 
-// const filesRef = ref(storage, `files/hello_something_OndřejLukeš hanluk@seznam.cz_3f35f6f0-72bc-4f6d-884e-8cdd7b7b6da0_`);
-
 // Get the download URL
 export const downloadURLFinder = async (storageRef: StorageReference): Promise<string | null> => {
   try {
@@ -54,26 +52,62 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
 //   .catch((error) => {
 //     console.error("Error setting session persistence:", error);
 //   });
-export const signInWithGoogle: () => Promise<UserCredential> = () => {
 
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      // console.log(result, "xyz");
-      const name = result.user?.displayName;
-      const email = result.user?.email;
-      const profilePic = result.user?.photoURL;
-      if (!email || !email.endsWith('zaci.gopat.cz')) {
-        // If email domain is not valid, throw an error
-        auth.signOut()
-        throw new Error('Přihlašte se účtem gymnázia Opatov');
-      }
-      return result;
-    })
-    .catch((error) => {
-      console.error("Error signing in with Google:", error);
-      throw error;
-    });
+const newVoter:Voter = {
+  name: '',
+   email: '',
+   votes:0,
+   id: ''
+   votedFoods: {}
+}
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const email = result.user?.email;
+
+    if (!email || !email.endsWith("zaci.gopat.cz")) {
+      // If email domain is not valid, sign out and throw an error
+      await auth.signOut();
+      throw new Error("Přihlašte se účtem gymnázia Opatov");
+    }
+
+    // Check if the user exists in the database
+    const userDoc = await getDoc(doc(db, "users", email));
+    if (!userDoc.exists()) {
+      // If user doesn't exist, create a new entry in the users collection
+      await setDoc(doc(db, "users", email), { ..newVoter });
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error signing in with Google:", error);
+    throw error;
+  }
 };
+
+
+// export const signInWithGoogle: () => Promise<UserCredential> = () => {
+
+//   return signInWithPopup(auth, provider)
+//     .then((result) => {
+//       // console.log(result, "xyz");
+//       const name = result.user?.displayName;
+//       const email = result.user?.email;
+//       const profilePic = result.user?.photoURL;
+//       if (!email || !email.endsWith('zaci.gopat.cz')) {
+//         // If email domain is not valid, throw an error
+//         auth.signOut()
+//         throw new Error('Přihlašte se účtem gymnázia Opatov');
+//       }
+//       return result;
+//     })
+//     .catch((error) => {
+//       console.error("Error signing in with Google:", error);
+//       throw error;
+//     });
+// };
 
 
 auth.onAuthStateChanged((user) => {

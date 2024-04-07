@@ -9,13 +9,39 @@ export type Food = {
   votes: {total: 0, won: 0}
   tags: Tag[]
 }
+export function isFood(value: any): value is Food {
+  // Check if the value is an object
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
 
+  // Check if all required properties are present and have the correct types
+  return (
+    'name' in value &&
+    typeof value.name === 'string' &&
+    'description' in value &&
+    typeof value.description === 'string' &&
+    'imageId' in value &&
+    typeof value.imageId === 'string' &&
+    'numAppeardInVote' in value &&
+    typeof value.numAppeardInVote === 'number' &&
+    'votes' in value &&
+    typeof value.votes === 'object' &&
+    'total' in value.votes &&
+    typeof value.votes.total === 'number' &&
+    'won' in value.votes &&
+    typeof value.votes.won === 'number' &&
+    'tags' in value &&
+    Array.isArray(value.tags) // Assuming tags is an array of Tag
+  );
+}
 export type Tag = {
   name:string
   color: CSSProperties['color'];
 }
 export type Voter = {
   name: string;
+  email:string;
   votes: number;
   id: string;
   votedFoods: { [foodId: string]: Food[] };

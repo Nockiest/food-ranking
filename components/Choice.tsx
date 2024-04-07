@@ -16,13 +16,11 @@ function Choice({
 }:
 ChoiceProps) {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
-  const { imageId, name, votes, tags } = food;
-  const percentRating = votes.total / votes.won
   useEffect(() => {
-    console.log(food, imageId, "loading");
-    if (imageId) {
+    console.log(food, food.imageId, "loading");
+    if (food.imageId) {
       const storage = getStorage();
-      const imageRef = ref(storage, `images/${imageId}`); // Assuming the images are stored in the "images" folder
+      const imageRef = ref(storage, `images/${food.imageId}`); // Assuming the images are stored in the "images" folder
       getDownloadURL(imageRef)
         .then((url) => {
           setImageDataUrl(url);
@@ -31,7 +29,14 @@ ChoiceProps) {
           console.error("Error retrieving image:", error);
         });
     }
-  }, [food, imageId]);
+  }, [food,food.imageId  ]);
+
+  if (!food){
+    return <p>food is missing</p>
+  }
+  const { imageId, name, votes, tags } = food;
+  const percentRating = votes.total / votes.won
+
 
   return (
     <Paper

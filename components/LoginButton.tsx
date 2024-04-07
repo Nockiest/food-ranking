@@ -17,19 +17,7 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const {userLoggedIn,currentUser, setCurrentUser} = useAuth()
 
-
   const [key, setKey] = useState(0)
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-
-  //     USER.value = user
-  //     setKey(key+1)
-  //     // setUser(user);
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, []); // this exist for refreshing purpouses
 
   const handleSignOut = async () => {
     try {
@@ -51,13 +39,7 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
         </div>
       ) : (
         <div>
-          {/* <Image
-            src={USER.value?.photoURL || '' }
-            alt="User Profile Icon"
-            className="profile-icon"
-            height={32}
-            width={32}
-          /> */}
+   
           <button
             className="bg-white text-black rounded-md px-4 py-2"
             onClick={handleSignOut}
