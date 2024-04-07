@@ -3,11 +3,10 @@ import { CSSProperties } from "react"
 export type Food = {
   name: string
   description: string
-  percentRating: Percent
-  // imgFirebaseURL?: string same as id
+
   imageId: string
   numAppeardInVote: number
-  otherFoodBilance: {food:Food, bilance: number}[]
+  votes: {total: 0, won: 0}
   tags: Tag[]
 }
 
@@ -16,12 +15,11 @@ export type Tag = {
   color: CSSProperties['color'];
 }
 export type Voter = {
-  name: string
-  votes: number
-  id:string
-  votedFoods: Food[]
-}
-
+  name: string;
+  votes: number;
+  id: string;
+  votedFoods: { [foodId: string]: Food[] };
+};
 type ToLowercaseUppercase<T extends string> = `${Uppercase<T> & Lowercase<T>}`;
 type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
   ? Acc[number]

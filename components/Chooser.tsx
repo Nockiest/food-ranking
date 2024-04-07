@@ -37,7 +37,7 @@ const Chooser = () => {
 
   return (
     <Container className="w-full mx-0">
-      <p>{rivalFoods[0]?.id}</p>
+
       {rivalFoods[0] !== undefined && rivalFoods[1] !== undefined ? (
         <Grid container direction="row">
           {/* {rivalFoods.every((value) => value !== undefined) ? ( */}

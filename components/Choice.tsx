@@ -13,10 +13,11 @@ interface ChoiceProps {
 function Choice({
   food,
   handleClick,
-}: 
+}:
 ChoiceProps) {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
-  const { imageId, name, percentRating, tags } = food;
+  const { imageId, name, votes, tags } = food;
+  const percentRating = votes.total / votes.won
   useEffect(() => {
     console.log(imageId, "loading");
     if (imageId) {
