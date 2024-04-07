@@ -12,9 +12,11 @@ import { Paper } from "@mui/material";
 
 import plusIcon from "../svg/plus-large.svg";
 import Image from "next/image";
+import { useAuth } from "@/app/authContext";
 
 const CreateFood = () => {
-  const [title, setTitle] = useState("");
+  const {userLoggedIn} = useAuth()
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [imageUpload, setImageUpload] = useState<File | null>(null);
@@ -39,7 +41,7 @@ const CreateFood = () => {
 
     // Create the food document
     const docRef = await addDoc(collection(db, "Foods"), {
-      title,
+      name,
       description,
       tags: [],
       categories: selectedCategories,
@@ -53,12 +55,12 @@ const CreateFood = () => {
     }
 
     // Clear input fields
-    setTitle("");
+    setName("");
     setDescription("");
     setSelectedCategories([]);
 
     // Show alert with food details
-    const alertMessage = `Food Title: ${title}\nFood Description: ${description}\nCategories: ${selectedCategories.join(
+    const alertMessage = `Food Title: ${name}\nFood Description: ${description}\nCategories: ${selectedCategories.join(
       ", "
     )}\nImage ID: ${postId} `;
     alert(`Food added!\n\n${alertMessage}`);
@@ -93,101 +95,100 @@ const CreateFood = () => {
     }
   };
   // keep all czech descriptions in czech
-  return (
-    <div className="flex h-full justify-center align-center items-center  ">
-      <div className='flex flex-row' >
-        <div className="w-24 h-24 border-black">
+  if (!userLoggedIn){
+    return <p>Pro nahrání jídel, se musíte přihlásit</p>
+  }
 
-        {imagePreview && (
-            <Image width={100} height={100} src={imagePreview} alt="Image Preview" className="mt-2  " />
+  return (
+    <div className="flex h-full justify-center align-center items-center">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div className="w-full border relative border-black flex justify-center items-center md:col-span-1">
+          {imagePreview && (
+            <Image fill={true} src={imagePreview} alt="Image Preview" />
           )}
         </div>
-        <div className="max-w-md mt-4 w-full   flex flex-col justify-center align-center  px-4">
-        <h1 className="text-3xl mb-6">Přidat Oběd</h1>
-        <div className="mb-4">
-          <label className="block mb-2">Název:</label>
-          <input
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            placeholder="Název..."
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">Popis obědu:</label>
-          <textarea
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            placeholder="ingredience, původ, chuť atd..."
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-          />
-        </div>
+        <div className="max-w-md mt-4 w-full col-span-2 px-4">
+          <h1 className="text-3xl mb-6">Přidat Oběd</h1>
+          <div className="mb-4">
+            <label className="block mb-2">Název:</label>
+            <input
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              placeholder="Název..."
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2">Popis obědu:</label>
+            <textarea
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              placeholder="Ingredience, původ, chuť atd..."
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="block mb-2">Štítky:</label>
-          <select
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value=""
-            onChange={handleCategoryChange}
-          >
-            <option value="" disabled>
-              Vybrat štítek
-            </option>
-            {foodTypes.map((foodType, index) => (
-              <option
-                key={index}
-                value={foodType.name}
-                style={{ margin: "1px", backgroundColor: foodType.color }}
-              >
-                {foodType.name}
-              </option>
-            ))}
-          </select>
-          <div>
-            {selectedCategories.map((category, index) => (
-              <div
-                key={index}
-                className="selectedCategory mt-2"
-                style={{
-                  backgroundColor: foodTypes.find((ft) => ft.name === category)
-                    ?.color,
-                }}
-              >
-                <span>{category}</span>
-                <button
-                  onClick={() => handleCategoryRemove(category)}
-                  className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+          <div className="mb-4">
+            <label className="block mb-2">Obrázek:</label>
+            <input
+              className="w-full"
+              type="file"
+              accept=".jpg, .png, .heic, .gif, .bmp, .webp"
+              onChange={handleImageChange}
+            />
+          </div>
+          <div className="flex">
+            <button className="btn-primary flex items-center" onClick={submitPost}>
+              <Image src={plusIcon} alt="plus" className="h-8 w-auto" />
+              <span className="ml-2">Přidat Oběd</span>
+            </button>
           </div>
         </div>
-        <div className="mb-4">
-          <label className="block mb-2">Obrázek:</label>
-          <input
-            className="w-full"
-            type="file"
-            accept=".jpg, .png, .heic, .gif, .bmp, .webp"
-            onChange={handleImageChange}
-          />
-
-        </div>
-        <div className="flex">
-        <button className="btn-primary flex items-center" onClick={submitPost}>
-          <Image src={plusIcon} alt="plus" className="h-8 w-auto" />
-          <span className="ml-2">Přidat Oběd</span>
-        </button>
-
-          <button className="bg-gray-300 text-gray-800 px-4 py-2 rounded ml-2 hover:bg-gray-400">
-            <Link href="/blog">Na Hlavní Stránku</Link>
-          </button>
-        </div>
       </div>
-        </div>
+      <div className="mb-4">
+            <label className="block mb-2">Štítky:</label>
+            <select
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              value=""
+              onChange={handleCategoryChange}
+            >
+              <option value="" disabled>
+                Vybrat štítek
+              </option>
+              {foodTypes.map((foodType, index) => (
+                <option
+                  key={index}
+                  value={foodType.name}
+                  style={{ margin: "1px", backgroundColor: foodType.color }}
+                >
+                  {foodType.name}
+                </option>
+              ))}
+            </select>
+            <div>
+              {selectedCategories.map((category, index) => (
+                <div
+                  key={index}
+                  className="selectedCategory mt-2"
+                  style={{
+                    backgroundColor: foodTypes.find((ft) => ft.name === category)?.color,
+                  }}
+                >
+                  <span>{category}</span>
+                  <button
+                    onClick={() => handleCategoryRemove(category)}
+                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
     </div>
   );
+
+
 };
 
 export default CreateFood;

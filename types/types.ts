@@ -4,14 +4,14 @@ export type Food = {
   name: string
   description: string
   percentRating: Percent
-  imgFirebaseURL?: string
-  id: string
+  // imgFirebaseURL?: string same as id
+  imageId: string
   numAppeardInVote: number
   otherFoodBilance: {food:Food, bilance: number}[]
   tags: Tag[]
 }
 
-export type Tag = { 
+export type Tag = {
   name:string
   color: CSSProperties['color'];
 }

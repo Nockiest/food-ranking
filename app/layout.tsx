@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "./authContext";
+import { FoodsProvider } from "./foodContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,9 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
+        <FoodsProvider>
           <Navbar />
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
           <Footer />
+          </ FoodsProvider>
         </AuthProvider>
       </body>
     </html>

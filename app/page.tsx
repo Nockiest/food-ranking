@@ -20,13 +20,13 @@ export default function Home() {
   // con
 
     return (
-      <AuthProvider> {/* Wrap your component tree with AuthProvider */}
+      // <AuthProvider> {/* Wrap your component tree with AuthProvider */}
       <FoodsProvider>
 
       <Chooser   />
 
       </FoodsProvider>
-        {/* <Refresher refreshers={[Foods.value, ]} /> */}
-      </AuthProvider>
+       //  {/* <Refresher refreshers={[Foods.value, ]} /> */}
+      // </AuthProvider>
     );
 }

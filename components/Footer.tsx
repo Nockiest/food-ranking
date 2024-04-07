@@ -15,7 +15,11 @@ export default function Footer() {
     <footer className={FOOTER_STYLING.base}>
       <ul className="footer__nav flex flex-wrap justify-start space-y-2 md:space-y-0 md:space-x-4 md:w-2/3">
         {/* Conditionally render the button only on the home page */}
-        { !pathname.endsWith("/addFood" )    && (
+        {  pathname.endsWith("/addFood" )  ? (
+          <Button className="bg-gray-300 text-gray-800 px-4 py-2 rounded ml-2 hover:bg-gray-400">
+          <Link href="/">Na Hlavní Stránku</Link>
+        </Button>
+        )  : (
           <li>
             <Button className="btn-base btn-primary">
               <Link href="addFood">Přidat Jídlo Do Databáze</Link>

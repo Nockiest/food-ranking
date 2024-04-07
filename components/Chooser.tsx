@@ -20,14 +20,14 @@ const Chooser = () => {
       const food = chooseRandomArrayValue(Foods.value);
       const food2 = chooseRandomArrayValue(Foods.value);
       setRivalFoods([food, food2]);
-      console.log(food);
+      // console.log(food?.name);
     }
   };
   const handleClick = (image: string) => {
     console.log(`You clicked on ${image}`);
     getNewFoods();
   };
-  effect(() => console.log(Foods.value));
+  // effect(() => console.log(Foods.value));
   if (!userLoggedIn) {
     return <p>přihlašte se prosím</p>;
   }
@@ -38,26 +38,17 @@ const Chooser = () => {
   return (
     <Container className="w-full mx-0">
       <p>{rivalFoods[0]?.id}</p>
-      {rivalFoods[0] !== null && rivalFoods[1] !== null ? (
-        <Grid
-          direction="row"
-          spacing={{ xs: 2, md: 3 }}
-          columns={{ xs: 4, sm: 8, md: 12 }}
-          item
-          xs={4}
-        >
-          {rivalFoods.map((food, index) => (
-            <Grid item xs={4} key={index}>
-              {/* {food && ( */}
-                <Choice
-                  imageURL={food? food.imgFirebaseURL : ""}
-                  name={food? food.name:''}
-                  percentPerformance={food? food.percentRating : 0}
-                  handleClick={handleClick}
-                />
-              {/* )} */}
-            </Grid>
-          ))}
+      {rivalFoods[0] !== undefined && rivalFoods[1] !== undefined ? (
+        <Grid container direction="row">
+          {/* {rivalFoods.every((value) => value !== undefined) ? ( */}
+           { rivalFoods.map((food, index) => (
+              <Grid item xs={4} sm={4} md={4} key={index}>
+                <Choice food={food as Food} handleClick={handleClick} />
+              </Grid>
+            ))}
+          {/* ) : ( */}
+            {/* <p>jídla na výběr nebyla načtena {rivalFoods[0]?.name}  {rivalFoods[1]?.name} </p> */}
+          {/* )} */}
         </Grid>
       ) : (
         <button className="btn-primary" onClick={() => getNewFoods()}>
