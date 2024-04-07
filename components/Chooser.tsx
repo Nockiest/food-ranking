@@ -18,7 +18,7 @@ const Chooser = () => {
   const getNewFoods = () => {
     if (Foods.value) {
       const food = chooseRandomArrayValue(Foods.value);
-      const food2 = chooseRandomArrayValue(Foods.value);
+      const food2 = chooseRandomArrayValue(Foods.value.filter(val => val !== food));
       setRivalFoods([food, food2]);
       // console.log(food?.name);
     }
