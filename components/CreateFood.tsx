@@ -14,6 +14,8 @@ import plusIcon from "../svg/plus-large.svg";
 import Image from "next/image";
 import { useAuth } from "@/app/authContext";
 
+// remove the next next to image select after submitting
+
 const initialFoodState: Food = {
   name: "",
   description: "",
@@ -38,10 +40,11 @@ const CreateFood = () => {
       [name]: value,
     }));
   };
-  const handleTagChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event);
+
+  const handleTagChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
-    console.log(name,value)
     const tag = foodTypes.find((foodType) => foodType.name === value);
 
     if (tag && !food.tags.includes(tag)) {
@@ -51,6 +54,7 @@ const CreateFood = () => {
       }));
     }
   };
+
   const handleTagRemove = (removedTag: string) => {
     setFood((prevFood) => ({
       ...prevFood,
@@ -58,7 +62,9 @@ const CreateFood = () => {
     }));
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files[0]) {
       const selectedImage = event.target.files[0];
       setImageUpload(selectedImage);
@@ -82,11 +88,9 @@ const CreateFood = () => {
     // Create the food document
     const docRef = await addDoc(collection(db, "Foods"), {
       ...food,
-      // tags: [],
-      // categories: selectedCategories,
       id,
       timeStamp,
-      imageId: food.imageId
+      imageId: id
     });
 
     // Upload image if provided
@@ -94,9 +98,9 @@ const CreateFood = () => {
       uploadFile(id);
     }
 
-    // Clear input fields
+    // Clear input fields and reset image preview
     setFood(initialFoodState);
-    // setSelectedCategories([]);
+    setImagePreview(null);
 
     // Show alert with food details
     const alertMessage = `Food Title: ${food.name}\nFood Description: ${food.description}\nCategories: ${food.tags.join(", ")}\nImage ID: ${id} `;
@@ -116,7 +120,7 @@ const CreateFood = () => {
     });
   };
 
-  // keep all czech descriptions in czech
+  // Keep all Czech descriptions in Czech
   if (!userLoggedIn) {
     return <p>Pro nahrání jídel, se musíte přihlásit</p>;
   }
@@ -173,7 +177,6 @@ const CreateFood = () => {
         </div>
       </div>
 
-      {/*tags */}
       <div className="mb-4">
         <label className="block mb-2">Štítky:</label>
         <select

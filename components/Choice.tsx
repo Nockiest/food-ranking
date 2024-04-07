@@ -19,7 +19,7 @@ ChoiceProps) {
   const { imageId, name, votes, tags } = food;
   const percentRating = votes.total / votes.won
   useEffect(() => {
-    console.log(imageId, "loading");
+    console.log(food, imageId, "loading");
     if (imageId) {
       const storage = getStorage();
       const imageRef = ref(storage, `images/${imageId}`); // Assuming the images are stored in the "images" folder
@@ -31,7 +31,7 @@ ChoiceProps) {
           console.error("Error retrieving image:", error);
         });
     }
-  }, [imageId]);
+  }, [food, imageId]);
 
   return (
     <Paper
