@@ -13,8 +13,14 @@ const Chooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
     [Food | undefined, Food | undefined]
   >([undefined, undefined]);
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, votingAccount } = useAuth();
   const { Foods } = useFood();
+
+  const processVote = (name:string) =>  {
+    console.log('you have voted', name)
+  }
+
+
   const getNewFoods = () => {
     if (Foods.value) {
       const food = chooseRandomArrayValue(Foods.value);
@@ -22,11 +28,6 @@ const Chooser = () => {
       setRivalFoods([food, food2]);
     }
   };
-  const handleClick = (image: string) => {
-    console.log(`You clicked on ${image}`);
-    getNewFoods();
-  };
-  // effect(() => console.log(Foods.value));
   if (!userLoggedIn) {
     return <p>přihlašte se prosím</p>;
   }
@@ -43,14 +44,18 @@ const Chooser = () => {
   }
   // add logic to handle state where all foods have been rated
   return (
-    <Container className="w-full mx-0">
-      <Grid container direction="row">
+    <Container className="w-full h-full  ">
+      {votingAccount?.votes}
+      {/* <Grid container direction="row" className="mx-auto" sm={10} spacing={2}> */}
+        <div className="flex mt-6 flex-row justify-center align-center">
         {rivalFoods.map((food  , index) => (
           <Grid item xs={4} sm={4} md={4} key={index}>
-            <Choice food={food as Food} handleClick={handleClick} />
+            <Choice food={food as Food} handleClick={processVote} />
           </Grid>
         ))}
-      </Grid>
+        </div>
+
+      {/* </Grid> */}
     </Container>
   );
 };

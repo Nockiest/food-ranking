@@ -1,10 +1,35 @@
-
-
 import { initializeApp } from "firebase/app";
-import { getFirestore, getDoc, doc, updateDoc, collection, onSnapshot , query, DocumentData, QuerySnapshot, getDocs, setDoc} from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
-import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
-import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
+import {
+  getFirestore,
+  getDoc,
+  doc,
+  updateDoc,
+  collection,
+  onSnapshot,
+  query,
+  DocumentData,
+  QuerySnapshot,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  UserCredential,
+} from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  StorageReference,
+} from "firebase/storage";
+import { User, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 import { Food, Voter } from "./types/types";
 import { uuid } from "uuidv4";
@@ -16,7 +41,7 @@ const firebaseConfig = {
   storageBucket: "food-ranking-d391d.appspot.com",
   messagingSenderId: "629245452002",
   appId: "1:629245452002:web:761033414b4d46e1b288bb",
-  measurementId: "G-SZ7N4MC030"
+  measurementId: "G-SZ7N4MC030",
 };
 
 // Initialize Firebase
@@ -25,17 +50,22 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const storage = getStorage();
-const colRef = collection(db, 'Foods');
-export { db,colRef, auth, provider, storage };
+const colRef = collection(db, "Foods");
+export { db, colRef, auth, provider, storage };
 // Create a reference with an initial file path and name
 
-const pathReference = ref(storage, 'files/Another%file_adf_OndřejLukeš hanluk@seznam.cz_7608bb02-0e03-4e94-9703-acb9512ddeb6_ ');
+const pathReference = ref(
+  storage,
+  "files/Another%file_adf_OndřejLukeš hanluk@seznam.cz_7608bb02-0e03-4e94-9703-acb9512ddeb6_ "
+);
 
 // Create a reference from a Google Cloud Storage URI
-const gsReference = ref(storage, 'gs://bucket/files/stars.jpg');
+const gsReference = ref(storage, "gs://bucket/files/stars.jpg");
 
 // Get the download URL
-export const downloadURLFinder = async (storageRef: StorageReference): Promise<string | null> => {
+export const downloadURLFinder = async (
+  storageRef: StorageReference
+): Promise<string | null> => {
   try {
     const url = await getDownloadURL(storageRef);
     console.log(url, storageRef);
@@ -46,33 +76,25 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
   }
 };
 
-const newVoter:Voter = {
-  name: '',
-   email: '',
-   votes:0,
-   id: '',
-   votedFoods: {}
-}
+const newVoter: Voter = {
+  name: "",
+  email: "",
+  votes: 0,
+  id: "",
+  votedFoods: {},
+};
 export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
 
   try {
     const result = await signInWithPopup(auth, provider);
     const email = result.user?.email;
-    const name = result.user.displayName
+    const name = result.user.displayName;
 
     if (!email || !email.endsWith("zaci.gopat.cz")) {
       // If email domain is not valid, sign out and throw an error
       await auth.signOut();
       throw new Error("Přihlašte se účtem gymnázia Opatov");
-    }
-
-    // Check if the user exists in the database
-    const userDoc = await getDoc(doc(db, "users", email));
-    if (!userDoc.exists()) {
-      // If user doesn't exist, create a new entry in the users collection
-      const newUser:Voter = {...newVoter, name:name? name:'', email, id:uuid() }
-      await setDoc(doc(db, "users", email), {newUser  });
     }
 
     return result;
@@ -82,19 +104,36 @@ export const signInWithGoogle = async () => {
   }
 };
 
+export const cacheVoter = async (user: User) => {
+  if (!user.email){
+    throw new Error('user doesnt have an email')
+  }
+  const userDoc = await getDoc(doc(db, "users", user.email));
+  if (!userDoc.exists()) {
+    // If user doesn't exist, create a new entry in the users collection
+    const newUser: Voter = {
+      ...newVoter,
+      name: user.displayName ? user.displayName : "",
+      email: user.email ? user.email : "",
+      id: uuid(),
+    };
+    await setDoc(doc(db, "users", user.email), { newUser });
+  }
+};
+
 auth.onAuthStateChanged((user) => {
   if (user) {
     // USER.value = user
-    console.log('User is signed in:',  );
+    console.log("User is signed in:");
   } else {
-    console.log('User has signed out',  );
+    console.log("User has signed out");
     // USER.value = null
   }
 });
 
 export const fetchFoods = async (): Promise<Food[]> => {
   try {
-    const colRef = collection(db, 'Foods');
+    const colRef = collection(db, "Foods");
     const snapshot: QuerySnapshot<DocumentData> = await getDocs(colRef);
     const foods = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     return foods as Food[];
@@ -111,7 +150,7 @@ export const getUserAuthentication = async () => {
         resolve(user);
       }, reject);
     });
-    return user as  User  ;
+    return user as User;
   } catch (error) {
     console.error("Error getting user authentication:", error);
     return null;
@@ -124,7 +163,6 @@ export const getUserAuthentication = async () => {
 //   .catch((error) => {
 //     console.error("Error setting session persistence:", error);
 //   });
-
 
 // export const checkUserAccess = async () => {
 //   try {
@@ -159,7 +197,6 @@ export const getUserAuthentication = async () => {
 //   return unsubscribe;
 // };
 
-
 // export const updateDbComments = async (postId, fieldToUpdate, newValue, parameterIsArray = true) => {
 //   console.log(postId, fieldToUpdate, newValue);
 
@@ -188,8 +225,6 @@ export const getUserAuthentication = async () => {
 //   }
 // };
 
-
-
 // export const updateBlogPost = async (postId, fieldToUpdate, newValue) => {
 //   try {
 //     const postRef = db.collection('BlogPosts').doc(postId);
@@ -206,7 +241,6 @@ export const getUserAuthentication = async () => {
 // const newValue = 'Updated Title'; // Replace with the new value for the specified field
 
 // updateBlogPost(postId, fieldToUpdate, newValue);
-
 
 // updateForm.addEventListener('submit', (e) => {
 //   e.preventDefault()

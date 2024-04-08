@@ -21,9 +21,9 @@ export default function Footer() {
         </Button>
         )  : (
           <li>
-            <Button className="btn-base btn-primary">
+            <button className="btn-base btn-primary">
               <Link href="addFood">Přidat Jídlo Do Databáze</Link>
-            </Button>
+            </button>
           </li>
         )}
       </ul>

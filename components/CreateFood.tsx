@@ -20,7 +20,7 @@ const initialFoodState: Food = {
   name: "",
   description: "",
   imageId: "",
-  numAppeardInVote: 0,
+  // numAppeardInVote: 0,
   votes: { total: 0, won: 0 },
   tags: [],
 };

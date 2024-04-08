@@ -23,11 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-        <FoodsProvider>
-          <Navbar />
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-          <Footer />
-          </ FoodsProvider>
+          <FoodsProvider>
+            <ThemeProvider theme={theme}>
+              <Navbar />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </FoodsProvider>
         </AuthProvider>
       </body>
     </html>
