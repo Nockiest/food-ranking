@@ -1,5 +1,5 @@
 // 'use client'
-import Chooser from "@/components/Chooser";
+import Chooser from "@/components/OptionChooser";
 
 export default function Home() {
   return (

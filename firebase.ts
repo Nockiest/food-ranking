@@ -117,7 +117,8 @@ export const cacheVoter = async (user: User) => {
       email: user.email ? user.email : "",
       id: uuid(),
     };
-    await setDoc(doc(db, "users", user.email), { newUser });
+    console.log(newUser, 'new user')
+    await setDoc(doc(db, "users", user.email),   newUser );
   }
 };
 

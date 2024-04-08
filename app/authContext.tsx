@@ -3,7 +3,7 @@ import   { createContext, useContext, useState, useEffect } from "react";
 import { auth, cacheVoter, db } from "../firebase";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { Voter } from "@/types/types";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 // Define the type for the authentication context value
 interface AuthContextValue {
@@ -11,6 +11,7 @@ interface AuthContextValue {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   votingAccount: Voter|null
+  setVotingAccount: React.Dispatch<React.SetStateAction<Voter | null>>;
 }
 
 // Create the authentication context
@@ -65,11 +66,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return unsubscribe;
   }, []);
+
+  useEffect(()=> {
+
+    const makeVoterUpdate = async () => {
+     if ( votingAccount ) {
+      try {
+        // Update votingAccount in the database
+        const docRef = doc(db, "users", votingAccount?.email); // Assuming "users" is your collection name
+        await updateDoc(docRef,   votingAccount  );
+        console.log('Vote processed successfully');
+      } catch (error) {
+        console.error('Error processing vote:', error);
+      }
+     }
+
+
+    }
+    makeVoterUpdate()
+  }, [votingAccount])
   const value: AuthContextValue = {
     userLoggedIn,
     currentUser,
     setCurrentUser,
-    votingAccount
+    votingAccount,
+    setVotingAccount
   };
 
   return (
