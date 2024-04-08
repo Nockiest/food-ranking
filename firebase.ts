@@ -85,18 +85,13 @@ const newVoter: Voter = {
 };
 export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
-
   try {
     const result = await signInWithPopup(auth, provider);
     const email = result.user?.email;
-    const name = result.user.displayName;
-
     if (!email || !email.endsWith("zaci.gopat.cz")) {
-      // If email domain is not valid, sign out and throw an error
       await auth.signOut();
       throw new Error("Přihlašte se účtem gymnázia Opatov");
     }
-
     return result;
   } catch (error) {
     console.error("Error signing in with Google:", error);
@@ -120,6 +115,7 @@ export const cacheVoter = async (user: User) => {
     console.log(newUser, 'new user')
     await setDoc(doc(db, "users", user.email),   newUser );
   }
+
 };
 
 auth.onAuthStateChanged((user) => {

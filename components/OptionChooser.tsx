@@ -1,6 +1,6 @@
 "use client";
-import { db, fetchFoods, getUserAuthentication } from "@/firebase";
-import { useEffect, useState } from "react";
+import { db, fetchFoods   } from "@/firebase";
+import {   useState } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
 import { chooseRandomArrayValue } from "@/utils";
@@ -8,22 +8,19 @@ import { Food, isFood } from "@/types/types";
 import { useAuth } from "@/app/authContext";
 import { useFood } from "@/app/foodContext";
 import { effect } from "@preact/signals";
-import { collection, getDoc, getDocs } from "firebase/firestore";
+import { collection,   getDocs } from "firebase/firestore";
 
 const Chooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
     [Food | undefined, Food | undefined]
   >([undefined, undefined]);
-  const { userLoggedIn, votingAccount,setVotingAccount } = useAuth();
+  const { userLoggedIn, votingAccount,makeDbVoterUpdate } = useAuth();
   const { Foods,  } = useFood();
 
-  const processVote = (name:string, ):void =>  {
-    if (!rivalFoods[0] || !rivalFoods[1]) {
-      console.log('rival foods missing')
-      return
-    }
-    if (!votingAccount) {
-      console.log('voting account missing')
+  const processVote =   (name:string, ):void =>  {
+
+    if (!votingAccount || !rivalFoods[0] || !rivalFoods[1]) {
+      console.log(`something missing  voteac: ${votingAccount}  food0: ${rivalFoods[0]} food1: ${rivalFoods[1]}`)
       return
     }
     console.log(rivalFoods, votingAccount)
@@ -37,46 +34,37 @@ const Chooser = () => {
     }
     updatedAccount.votedFoods[rivalFoods[0].name].push(rivalFoods[1])
     updatedAccount.votedFoods[rivalFoods[1].name].push(rivalFoods[0])
-    setVotingAccount(updatedAccount)
+    makeDbVoterUpdate(updatedAccount)
     getNewFoods()
   }
 
 
   const getNewFoods = async () => {
-    const colRef = collection(db, "Foods");
-
-    if (Foods.value) {
-      // Get the total number of foods in the collection
-      const querySnapshot = await getDocs(colRef);
-      const totalFoods = querySnapshot.docs.length;
-
+    setRivalFoods([undefined,undefined])
+    if (Foods.value && votingAccount) {
+      // Get the total number of foods in th
+      const totalFoods = Foods.value.length
       let rem = [...Foods.value]; // Create a copy of Foods.value
-
       let food;
       let food2;
-
       // Choose random food and check if votedFoods length is one smaller or bigger
-      do {
+        console.log(rem, '1')
         food = chooseRandomArrayValue(rem);
         if (food) {
           const foodIndex = rem.indexOf(food);
           rem.splice(foodIndex, 1); // Remove the chosen food from rem
+          if (votingAccount.votedFoods[food.name]) {
+            rem = rem.filter(val => votingAccount.votedFoods[food.name].indexOf(val) === -1);
+          }
         }
-      } while (
-        food &&
-        rem.length > 0 &&
-        votingAccount &&
-        votingAccount.votedFoods[food.name]?.length > totalFoods - 1
-      );
-
-      // If food is undefined, break the loop immediately
-      if (!food) {
-        console.log("Food is undefined. Exiting loop.");
+      if (!food|| !votingAccount|| rem.length <= 0 || votingAccount.votedFoods[food.name]?.length > totalFoods - 1) {
+        console.log("Food is undefined. Exiting loop.", !food,!votingAccount, rem.length ,votingAccount.votedFoods[food.name]?.length > totalFoods - 1);
         return;
       }
-
       // Choose second food
       do {
+        console.log(rem, '2')
+
         food2 = chooseRandomArrayValue(rem);
         if (food2) {
           const foodIndex = rem.indexOf(food2);
@@ -88,8 +76,9 @@ const Chooser = () => {
         votingAccount &&
         votingAccount.votedFoods[food2.name]?.length > totalFoods - 1
       );
-      console.log(food, food2, 'chosen')
-      setRivalFoods([food, food2]);
+      if (food&&food2){
+        setRivalFoods([food, food2]);
+      }
     }
   };
 
@@ -126,20 +115,3 @@ const Chooser = () => {
 };
 
 export default Chooser;
-//   <Grid item xs={4}>
-//     <Choice
-//       imageURL="/test.png"
-//       name={"img1"}
-//       percentPerformance={50}
-//       handleClick={handleClick}
-//     />
-//   </Grid>
-//   <Grid item xs={4}>
-//     <Choice
-//       imageURL="/mil.jpeg"
-//       name={"img2"}
-//       percentPerformance={50}
-//       handleClick={handleClick}
-//     />
-//   </Grid>
-// </Grid>

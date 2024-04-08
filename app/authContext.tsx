@@ -11,7 +11,7 @@ interface AuthContextValue {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   votingAccount: Voter|null
-  setVotingAccount: React.Dispatch<React.SetStateAction<Voter | null>>;
+  makeDbVoterUpdate: (voter:Voter) => void
 }
 
 // Create the authentication context
@@ -30,7 +30,7 @@ export function useAuth(): AuthContextValue {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false);
-  const [votingAccount, setVotingAccount] = useState<Voter|null>(null)
+  const [votingAccount, setVotingAccount] = useState<Voter|null>(null)// use the makedbvoterupdate to update the voter!!
   const [loading, setLoading] = useState<boolean>(true);
 
 
@@ -38,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
       if (user) {
         setCurrentUser({ ...user });
-
         // Check if there's an entry in the Firebase database with the user's email
         const email = user.email;
         if (email) {
@@ -66,31 +65,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return unsubscribe;
   }, []);
-
-  useEffect(()=> {
-
-    const makeVoterUpdate = async () => {
-     if ( votingAccount ) {
-      try {
-        // Update votingAccount in the database
-        const docRef = doc(db, "users", votingAccount?.email); // Assuming "users" is your collection name
-        await updateDoc(docRef,   votingAccount  );
-        console.log('Vote processed successfully');
-      } catch (error) {
-        console.error('Error processing vote:', error);
-      }
+  const makeDbVoterUpdate = async (voter:Voter) => {
+    console.log('called')
+     if (voter) {
+       try {
+         // Update voter in the database
+         setVotingAccount(voter)
+         const docRef = doc(db, "users", voter?.email);
+         await updateDoc(docRef, voter);
+         console.log('Vote processed successfully', docRef, voter);
+       } catch (error) {
+         console.error('Error processing vote:', error);
+       }
      }
+   };
 
-
-    }
-    makeVoterUpdate()
-  }, [votingAccount])
   const value: AuthContextValue = {
     userLoggedIn,
     currentUser,
     setCurrentUser,
     votingAccount,
-    setVotingAccount
+    makeDbVoterUpdate
   };
 
   return (

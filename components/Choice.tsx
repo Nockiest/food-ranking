@@ -7,17 +7,12 @@ import { Food } from "@/types/types";
 interface ChoiceProps {
   handleClick: (image: string) => void;
   food: Food;
-
 }
 
-function Choice({
-  food,
-  handleClick,
-}:
-ChoiceProps) {
+function Choice({ food, handleClick }: ChoiceProps) {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   useEffect(() => {
-    console.log(food, food.imageId, "loading");
+    // console.log(food, food.imageId, "loading");
     if (food.imageId) {
       const storage = getStorage();
       const imageRef = ref(storage, `images/${food.imageId}`); // Assuming the images are stored in the "images" folder
@@ -29,14 +24,13 @@ ChoiceProps) {
           console.error("Error retrieving image:", error);
         });
     }
-  }, [food,food.imageId  ]);
+  }, [food, food.imageId]);
 
-  if (!food){
-    return <p>food is missing</p>
+  if (!food) {
+    return <p>food is missing</p>;
   }
   const { imageId, name, votes, tags } = food;
-  const percentRating = votes.total / votes.won
-
+  const percentRating = votes.total / votes.won;
 
   return (
     <Paper
@@ -48,8 +42,8 @@ ChoiceProps) {
           <Image
             src={imageDataUrl}
             alt={name}
-            layout={"fill"}
-            className = {'select-none'}
+            layout="fill"
+            className={"select-none"}
             placeholder="blur"
             objectFit="contain"
             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60DZ5wAAAABJRU5ErkJggg=="
@@ -57,7 +51,7 @@ ChoiceProps) {
         )}
       </div>
       <h2 className="font-bold text-2xl">{name}</h2>
-      {imageId}
+
       <p>description</p>
       {tags.map((tag) => (
         <p key={tag.name} style={{ color: tag.color }}>
