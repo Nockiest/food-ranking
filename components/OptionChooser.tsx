@@ -1,6 +1,6 @@
 "use client";
 import { db, fetchFoods   } from "@/firebase";
-import {   useState } from "react";
+import {   useEffect, useState } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
 import { chooseRandomArrayValue } from "@/utils";
@@ -8,7 +8,7 @@ import { Food, isFood } from "@/types/types";
 import { useAuth } from "@/app/authContext";
 import { useFood } from "@/app/foodContext";
 import { effect } from "@preact/signals";
-import { collection,   doc,   getDoc,   getDocs } from "firebase/firestore";
+import { collection,   doc,   getDoc,   getDocs, setDoc } from "firebase/firestore";
 
 const Chooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
@@ -35,9 +35,22 @@ const Chooser = () => {
     updatedAccount.votedFoods[rivalFoods[0].name].push(rivalFoods[1])
     updatedAccount.votedFoods[rivalFoods[1].name].push(rivalFoods[0])
     makeDbVoterUpdate(updatedAccount)
-    updateFoodStats()
+    updateFoodStats( name)
     getNewFoods()
   }
+  useEffect(() => {
+    if (Foods.value && rivalFoods[0] && rivalFoods[1]) {
+      const index1 = Foods.value.findIndex(food => food === rivalFoods[0]);
+      const index2 = Foods.value.findIndex(food => food === rivalFoods[1]);
+
+      if (index1 !== -1) {
+        Foods.value[index1] = rivalFoods[0];
+      }
+      if (index2 !== -1) {
+        Foods.value[index2] = rivalFoods[1];
+      }
+    }
+  }, [Foods.value, rivalFoods[0], rivalFoods[1]]);
 
 
   const getNewFoods = async () => {
@@ -83,10 +96,24 @@ const Chooser = () => {
     }
   };
 
-  const updateFoodStats = async (food1 = rivalFoods[0], food2= rivalFoods[1]) => {
-    // const userDoc = await getDoc(doc(db, "Foods", email));
-    return
-  }
+  const updateFoodStats = async (winnerName: string, food1: Food = rivalFoods[0] as Food, food2: Food = rivalFoods[1] as Food, ) => {
+    if (food1 && food2) {
+      // Increment total votes for both foods
+      food1.votes.total += 1;
+      food2.votes.total += 1;
+
+      // Increment won votes for the winner
+      if (food1.name === winnerName) {
+        food1.votes.won += 1;
+      } else if (food2.name === winnerName) {
+        food2.votes.won += 1;
+      }
+    }
+    await setDoc(doc(db, "Foods", food1.imageId), food1 )
+    await setDoc(doc(db, "Foods", food2.imageId), food2 )
+    // await setDoc(doc(db, "Foods", id)
+  };
+
 
   if (!userLoggedIn) {
     return <p>přihlašte se prosím</p>;
