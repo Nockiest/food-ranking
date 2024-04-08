@@ -1,7 +1,7 @@
 "use client";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState, useEffect, ChangeEventHandler } from "react";
-import { serverTimestamp, addDoc, collection } from "firebase/firestore";
+import { serverTimestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { storage, colRef, db, auth } from "@/firebase";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -85,30 +85,36 @@ const CreateFood = () => {
     const id = uuidv4();
     const timeStamp = serverTimestamp();
 
-    // Create the food document
-    const docRef = await addDoc(collection(db, "Foods"), {
-      ...food,
-      id,
-      timeStamp,
-      imageId: id
-    });
+    try {
+      // Create the food document
+      await setDoc(doc(db, "Foods", id), {
+        ...food,
+        id,
+        timeStamp,
+        imageId: id
+      });
 
-    // Upload image if provided
-    if (imageUpload) {
-      uploadFile(id);
+      // Upload image if provided
+      if (imageUpload) {
+        await uploadFile(id);
+      }
+
+      // Clear input fields and reset image preview
+      setFood(initialFoodState);
+      setImagePreview(null);
+
+      // Show alert with food details
+      const alertMessage = `Food Title: ${food.name}\nFood Description: ${food.description}\nCategories: ${food.tags.join(", ")}\nImage ID: ${id} `;
+      alert(`Food added!\n\n${alertMessage}`);
+
+      // Console log the image ID and the food ID
+      alert(`Image ID: ${id}  `);
+    } catch (error) {
+      console.error("Error adding food:", error);
+      // Handle error here
     }
-
-    // Clear input fields and reset image preview
-    setFood(initialFoodState);
-    setImagePreview(null);
-
-    // Show alert with food details
-    const alertMessage = `Food Title: ${food.name}\nFood Description: ${food.description}\nCategories: ${food.tags.join(", ")}\nImage ID: ${id} `;
-    alert(`Food added!\n\n${alertMessage}`);
-
-    // Console log the image ID and the food ID
-    alert(`Image ID: ${id} Food ID: ${docRef.id}`);
   };
+
 
   const uploadFile = (postId: string) => {
     const imageRef = ref(storage, `images/${postId}`);

@@ -8,7 +8,7 @@ import { Food, isFood } from "@/types/types";
 import { useAuth } from "@/app/authContext";
 import { useFood } from "@/app/foodContext";
 import { effect } from "@preact/signals";
-import { collection,   getDocs } from "firebase/firestore";
+import { collection,   doc,   getDoc,   getDocs } from "firebase/firestore";
 
 const Chooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
@@ -35,6 +35,7 @@ const Chooser = () => {
     updatedAccount.votedFoods[rivalFoods[0].name].push(rivalFoods[1])
     updatedAccount.votedFoods[rivalFoods[1].name].push(rivalFoods[0])
     makeDbVoterUpdate(updatedAccount)
+    updateFoodStats()
     getNewFoods()
   }
 
@@ -81,6 +82,11 @@ const Chooser = () => {
       }
     }
   };
+
+  const updateFoodStats = async (food1 = rivalFoods[0], food2= rivalFoods[1]) => {
+    // const userDoc = await getDoc(doc(db, "Foods", email));
+    return
+  }
 
   if (!userLoggedIn) {
     return <p>přihlašte se prosím</p>;
