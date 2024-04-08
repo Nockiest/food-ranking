@@ -3,9 +3,8 @@ import { CSSProperties } from "react"
 export type Food = {
   name: string
   description: string
-
   imageId: string
-  numAppeardInVote: number
+  // numAppeardInVote: number
   votes: {total: 0, won: 0}
   tags: Tag[]
 }

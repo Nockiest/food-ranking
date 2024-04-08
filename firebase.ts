@@ -6,7 +6,8 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getStorage, ref, uploadBytes,getDownloadURL, StorageReference } from 'firebase/storage';
 import { User ,setPersistence,browserSessionPersistence } from 'firebase/auth';
 
-import { Food } from "./types/types";
+import { Food, Voter } from "./types/types";
+import { uuid } from "uuidv4";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",
@@ -45,19 +46,11 @@ export const downloadURLFinder = async (storageRef: StorageReference): Promise<s
   }
 };
 
-// setPersistence(auth, browserSessionPersistence)
-//   .then(() => {
-//     console.log("Session persistence set successfully");
-//   })
-//   .catch((error) => {
-//     console.error("Error setting session persistence:", error);
-//   });
-
 const newVoter:Voter = {
   name: '',
    email: '',
    votes:0,
-   id: ''
+   id: '',
    votedFoods: {}
 }
 export const signInWithGoogle = async () => {
@@ -66,6 +59,7 @@ export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const email = result.user?.email;
+    const name = result.user.displayName
 
     if (!email || !email.endsWith("zaci.gopat.cz")) {
       // If email domain is not valid, sign out and throw an error
@@ -77,7 +71,8 @@ export const signInWithGoogle = async () => {
     const userDoc = await getDoc(doc(db, "users", email));
     if (!userDoc.exists()) {
       // If user doesn't exist, create a new entry in the users collection
-      await setDoc(doc(db, "users", email), { ..newVoter });
+      const newUser:Voter = {...newVoter, name:name? name:'', email, id:uuid() }
+      await setDoc(doc(db, "users", email), {newUser  });
     }
 
     return result;
@@ -86,29 +81,6 @@ export const signInWithGoogle = async () => {
     throw error;
   }
 };
-
-
-// export const signInWithGoogle: () => Promise<UserCredential> = () => {
-
-//   return signInWithPopup(auth, provider)
-//     .then((result) => {
-//       // console.log(result, "xyz");
-//       const name = result.user?.displayName;
-//       const email = result.user?.email;
-//       const profilePic = result.user?.photoURL;
-//       if (!email || !email.endsWith('zaci.gopat.cz')) {
-//         // If email domain is not valid, throw an error
-//         auth.signOut()
-//         throw new Error('Přihlašte se účtem gymnázia Opatov');
-//       }
-//       return result;
-//     })
-//     .catch((error) => {
-//       console.error("Error signing in with Google:", error);
-//       throw error;
-//     });
-// };
-
 
 auth.onAuthStateChanged((user) => {
   if (user) {
@@ -145,6 +117,14 @@ export const getUserAuthentication = async () => {
     return null;
   }
 };
+// setPersistence(auth, browserSessionPersistence)
+//   .then(() => {
+//     console.log("Session persistence set successfully");
+//   })
+//   .catch((error) => {
+//     console.error("Error setting session persistence:", error);
+//   });
+
 
 // export const checkUserAccess = async () => {
 //   try {
