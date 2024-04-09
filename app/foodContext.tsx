@@ -21,9 +21,6 @@ export function useFood(): FoodContextValue {
   }
   return context;
 }
-// Create the food context
-
-
 
 // Foods provider component
 export function FoodsProvider({ children }: { children: React.ReactNode }) {

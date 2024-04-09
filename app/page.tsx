@@ -1,10 +1,10 @@
 // 'use client'
-import Chooser from "@/components/OptionChooser";
+import OptionChooser from "@/components/OptionChooser";
 
 export default function Home() {
   return (
     <div className="flex justify-center">
-      <Chooser />
+      <OptionChooser />
     </div>
   );
 }
