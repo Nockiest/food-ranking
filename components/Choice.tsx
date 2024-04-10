@@ -12,11 +12,10 @@ interface ChoiceProps {
 function Choice({ food, handleClick }: ChoiceProps) {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
 
-  const { imageId, name, votes, tags } = food;
-  const percentRating = votes.total / votes.won;
+ 
 
   useEffect(() => {
-    if (food.imageId) {
+    if (food?.imageId) {
       const storage = getStorage();
       const imageRef = ref(storage, `images/${food.imageId}`); // Assuming the images are stored in the "images" folder
       getDownloadURL(imageRef)
@@ -27,10 +26,13 @@ function Choice({ food, handleClick }: ChoiceProps) {
           console.error("Error retrieving image:", error);
         });
     }
-  }, [food.imageId ]);
+  }, [food ]);
   if (!food) {
     return <p>food is missing</p>;
   }
+  const {   name, votes, tags } = food;
+  const percentRating = votes.total / votes.won;
+
   return (
     <Paper
       className="select-none m-2 p-2 flex flex-col items-start justify-center  cursor-pointer hover:shadow-lg"

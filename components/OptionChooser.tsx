@@ -1,6 +1,6 @@
 "use client";
-import { db, fetchFoods } from "@/firebase";
-import { useEffect, useState } from "react";
+import { addFoodVote, db,   } from "@/firebase";
+import { useEffect, useState, useReducer } from "react";
 import Choice from "./Choice";
 import { Container, Grid } from "@mui/material";
 import { chooseRandomArrayValue } from "@/utils";
@@ -11,13 +11,35 @@ import { effect } from "@preact/signals";
 import { doc, setDoc } from "firebase/firestore";
 
 // i should funnel the logic in this function to prevent sideeffects
+
+enum OptionChooserState {
+  LOADING,
+  WAITING_FOR_SELECTION,
+  VOTING_SESSION_STARTED,
+}
+
+// Define the reducer function
+const optionChooserReducer = (state: OptionChooserState, action: any) => {
+  switch (action.type) {
+    case 'LOADING':
+      return OptionChooserState.LOADING;
+    case 'WAITING_FOR_SELECTION':
+      return OptionChooserState.WAITING_FOR_SELECTION;
+    case 'VOTING_SESSION_STARTED':
+      return OptionChooserState.VOTING_SESSION_STARTED;
+    default:
+      return state;
+  }
+};
+
 const OptionChooser = () => {
   const [rivalFoods, setRivalFoods] = useState<
     [Food | undefined, Food | undefined]
   >([undefined, undefined]);
   const { userLoggedIn, votingAccount, makeDbVoterUpdate } = useAuth();
   const { Foods } = useFood();
-  const [votingSessionStarted, setVotingSessionStarted] = useState(false)
+  const [state, dispatch] = useReducer(optionChooserReducer, OptionChooserState.LOADING);
+
   const processVote = (name: string): void => {
     if (!votingAccount || !rivalFoods[0] || !rivalFoods[1]) {
       console.log(
@@ -37,7 +59,10 @@ const OptionChooser = () => {
     updatedAccount.votedFoods[rivalFoods[0].name].push(rivalFoods[1]);
     updatedAccount.votedFoods[rivalFoods[1].name].push(rivalFoods[0]);
     makeDbVoterUpdate(updatedAccount);
-    updateFoodStats(name);
+    
+    addFoodVote(rivalFoods[0], rivalFoods[0].name === name)
+    addFoodVote(rivalFoods[1], rivalFoods[1].name === name)
+    // updateFoodStats(name);
 
     Foods.value && getNewFoods(Foods.value);
   };
@@ -54,24 +79,30 @@ const OptionChooser = () => {
       }
     }
   }, [Foods.value, rivalFoods]);
-
+  useEffect(() => {
+    if (userLoggedIn){
+    dispatch({ type: 'WAITING_FOR_SELECTION' });
+    } else {
+      dispatch({ type: 'LOADING' });
+    }
+  }, [userLoggedIn])
   const getNewFoods = async (foods: Food[]) => {
-    setVotingSessionStarted(true)
     setRivalFoods([undefined, undefined]);
     if (foods && votingAccount) {
       // Get the total number of foods in th
       const totalFoods = foods.length;
       let rem = [...foods]; // Create a copy of Foods.value
-      let food1;
-      let food2;
+      let food1:Food|undefined;
+      let food2:Food|undefined;
       console.log(rem, "1");
       food1 = chooseRandomArrayValue(rem);
-      if (food1) {
+      if (food1 && food1.name) {
+        const fName = food1.name
         const foodIndex = rem.indexOf(food1);
         rem.splice(foodIndex, 1); // Remove the chosen food1 from rem
-        if (votingAccount.votedFoods[food1.name]) {
+        if (votingAccount.votedFoods[fName]  ) {
           rem = rem.filter(
-            (val) => votingAccount.votedFoods[food1.name].indexOf(val) === -1
+            (val) => votingAccount.votedFoods[fName].indexOf(val) === -1
           );
         }
       }
@@ -112,61 +143,86 @@ const OptionChooser = () => {
     }
   };
 
-  const updateFoodStats = async (
-    winnerName: string,
-    food1: Food = rivalFoods[0] as Food,
-    food2: Food = rivalFoods[1] as Food
-  ) => {
-    if (food1 && food2) {
-      // Increment total votes for both foods
-      food1.votes.total += 1;
-      food2.votes.total += 1;
+  // const updateFoodStats = async (
+  //   winnerName: string,
+  //   food1: Food = rivalFoods[0] as Food,
+  //   food2: Food = rivalFoods[1] as Food
+  // ) => {
+  //   // if (food1 && food2) {
+  //   //   // Increment total votes for both foods
+  //   //   food1.votes.total += 1;
+  //   //   food2.votes.total += 1;
 
-      // Increment won votes for the winner
-      if (food1.name === winnerName) {
-        food1.votes.won += 1;
-      } else if (food2.name === winnerName) {
-        food2.votes.won += 1;
-      }
-    }
-    await setDoc(doc(db, "Foods", food1.imageId), food1);
-    await setDoc(doc(db, "Foods", food2.imageId), food2);
-  };
-
-  if (!userLoggedIn) {
-    return <p>přihlašte se prosím</p>;
+  //   //   // Increment won votes for the winner
+  //   //   if (food1.name === winnerName) {
+  //   //     food1.votes.won += 1;
+  //   //   } else if (food2.name === winnerName) {
+  //   //     food2.votes.won += 1;
+  //   //   }
+  //   // }
+  //   // await setDoc(doc(db, "Foods", food1.imageId), food1);
+  //   // await setDoc(doc(db, "Foods", food2.imageId), food2);
+  // };
+  switch (state) {
+    case OptionChooserState.LOADING:
+      return <p>Loading...</p>;
+    case OptionChooserState.WAITING_FOR_SELECTION:
+      return (
+        <button className="btn-primary" onClick={() => { 
+          getNewFoods(Foods?.value)
+          dispatch({ type: 'VOTING_SESSION_STARTED' })}}
+          >
+          Start voting
+        </button>
+      );
+    case OptionChooserState.VOTING_SESSION_STARTED:
+      return (
+        <Container className="w-full h-full">
+          <div className="flex mt-6 flex-row justify-center align-center">
+            {rivalFoods.map((food, index) => (
+              <Grid item xs={4} sm={4} md={4} key={index}>
+                <Choice food={food as Food} handleClick={processVote} />
+              </Grid>
+            ))}
+          </div>
+        </Container>
+      );
+    default:
+      return null;
   }
-
-  // if (rivalFoods[0] == undefined || rivalFoods[1] == undefined) {
-  //   return <p>už není co vybírat</p>;
-  // }
-  if (rivalFoods[0] == undefined && rivalFoods[1] == undefined && !votingSessionStarted) {
-    return (
-      <button className="btn-primary" onClick={() => getNewFoods(Foods.value? Foods.value : [])}>
-        Začít vybírat
-      </button>
-    );
-  }
-  if ( Foods.value === null ) {
-    console.log(Foods.value)
-    return <p>počkejte na načtení obědů </p>;
-  }
-  // add logic to handle state where all foods have been rated
-  return (
-    <Container className="w-full h-full  ">
-      {votingAccount?.votes}
-      {/* <Grid container direction="row" className="mx-auto" sm={10} spacing={2}> */}
-      <div className="flex mt-6 flex-row justify-center align-center">
-        {rivalFoods.map((food, index) => (
-          <Grid item xs={4} sm={4} md={4} key={index}>
-            <Choice food={food as Food} handleClick={processVote} />
-          </Grid>
-        ))}
-      </div>
-
-      {/* </Grid> */}
-    </Container>
-  );
-};
+}
 
 export default OptionChooser;
+
+//   if (!userLoggedIn) {
+//     return <p>přihlašte se prosím</p>;
+//   }
+
+//   // if (rivalFoods[0] == undefined || rivalFoods[1] == undefined) {
+//   //   return <p>už není co vybírat</p>;
+//   // }
+//   if (rivalFoods[0] == undefined && rivalFoods[1] == undefined && !votingSessionStarted) {
+//     return (
+//       <button className="btn-primary" onClick={() => getNewFoods(Foods.value? Foods.value : [])}>
+//         Začít vybírat
+//       </button>
+//     );
+//   }
+//   if ( Foods.value === null ) {
+//     console.log(Foods.value)
+//     return <p>počkejte na načtení obědů </p>;
+//   }
+//   // add logic to handle state where all foods have been rated
+//   return (
+//     <Container className="w-full h-full  ">
+//       <div className="flex mt-6 flex-row justify-center align-center">
+//         {rivalFoods.map((food, index) => (
+//           <Grid item xs={4} sm={4} md={4} key={index}>
+//             <Choice food={food as Food} handleClick={processVote} />
+//           </Grid>
+//         ))}
+//       </div>
+
+//     </Container>
+//   );
+// };

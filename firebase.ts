@@ -3,10 +3,7 @@ import {
   getFirestore,
   getDoc,
   doc,
-  updateDoc,
   collection,
-  onSnapshot,
-  query,
   DocumentData,
   QuerySnapshot,
   getDocs,
@@ -14,8 +11,6 @@ import {
 } from "firebase/firestore";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
@@ -29,12 +24,17 @@ import {
   getDownloadURL,
   StorageReference,
 } from "firebase/storage";
-import { User, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { User,  } from "firebase/auth";
 
 import { Food, Voter } from "./types/types";
 import { uuid } from "uuidv4";
+import dotenv from 'dotenv';
 
+dotenv.config(); // Load environment variables from .env.local file
+const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
+console.log(apiKey, 'api')
 const firebaseConfig = {
+  // apiKey:  apiKey, 
   apiKey: "AIzaSyCm1KkHTlvokOMXhrtcNqF1rDC_m7C_zbw",
   authDomain: "food-ranking-d391d.firebaseapp.com",
   projectId: "food-ranking-d391d",
@@ -52,15 +52,6 @@ const provider = new GoogleAuthProvider();
 const storage = getStorage();
 const colRef = collection(db, "Foods");
 export { db, colRef, auth, provider, storage };
-// Create a reference with an initial file path and name
-
-const pathReference = ref(
-  storage,
-  "files/Another%file_adf_OndřejLukeš hanluk@seznam.cz_7608bb02-0e03-4e94-9703-acb9512ddeb6_ "
-);
-
-// Create a reference from a Google Cloud Storage URI
-const gsReference = ref(storage, "gs://bucket/files/stars.jpg");
 
 // Get the download URL
 export const downloadURLFinder = async (
@@ -102,9 +93,11 @@ export const signInWithGoogle = async () => {
 export const cacheVoter = async (user: User) => {
   if (!user.email){
     throw new Error('user doesnt have an email')
+  } else if (!user.email.endsWith("zaci.gopat.cz")) {
+    throw new Error("Přihlašte se účtem gymnázia Opatov");
   }
   const userDoc = await getDoc(doc(db, "users", user.email));
-  if (!userDoc.exists()) {
+  if (!userDoc.exists() ) {
     // If user doesn't exist, create a new entry in the users collection
     const newUser: Voter = {
       ...newVoter,
@@ -153,6 +146,17 @@ export const getUserAuthentication = async () => {
     return null;
   }
 };
+
+export const addFoodVote = async (food:Food, won:boolean=false) => {
+  const newFood = {
+    ...food,
+    votes: {
+      total: food.votes.total+1,
+      won: won? food.votes.won+1: food.votes.won
+    }
+  }
+  await setDoc(doc(db, "Foods", food.imageId), newFood);
+}
 // setPersistence(auth, browserSessionPersistence)
 //   .then(() => {
 //     console.log("Session persistence set successfully");
