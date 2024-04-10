@@ -3,12 +3,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState, useEffect, ChangeEventHandler } from "react";
 import { serverTimestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { storage, colRef, db, auth } from "@/firebase";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
-import { Food, Tag } from "@/types/types";
+import { Food  } from "@/types/types";
 import { foodTypes } from "@/globalValues";
-import { Paper } from "@mui/material";
 
 import plusIcon from "../svg/plus-large.svg";
 import Image from "next/image";
@@ -20,7 +17,6 @@ const initialFoodState: Food = {
   name: "",
   description: "",
   imageId: "",
-  // numAppeardInVote: 0,
   votes: { total: 0, won: 0 },
   tags: [],
 };
@@ -44,7 +40,7 @@ const CreateFood = () => {
   const handleTagChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { name, value } = event.target;
+    const {   value } = event.target;
     const tag = foodTypes.find((foodType) => foodType.name === value);
 
     if (tag && !food.tags.includes(tag)) {
