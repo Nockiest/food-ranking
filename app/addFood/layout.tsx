@@ -1,4 +1,5 @@
 import { AuthProvider } from "../authContext";
+import { FoodsProvider } from "../foodContext";
 
 export default function AddFoodLayout({
   children,
@@ -8,7 +9,10 @@ export default function AddFoodLayout({
   return (
 
       <AuthProvider>
-            {children}
+        <FoodsProvider>
+        {children}
+
+        </FoodsProvider>
       </AuthProvider>
 
   );

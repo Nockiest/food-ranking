@@ -1,3 +1,4 @@
+'use client'
 import Leaderboard from '@/components/Leaderboard'
 import React from 'react'
 import { FoodsProvider, useFood } from '../foodContext'
@@ -8,9 +9,9 @@ const LeaderboardPage = () => {
         return <p>počkejte na načtení jídel</p>
     }
   return (
-<>
+< >
     <Leaderboard Foods={Foods.value}/>
-  </>
+  </  >
   )
 }
 

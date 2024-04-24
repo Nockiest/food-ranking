@@ -95,7 +95,7 @@ const OptionChooser = () => {
     let food2: Food | undefined;
     console.log(rem, " 1");
     food1 = chooseRandomArrayValue(rem);
-    if (food1) {
+    if (food1 && food1.name) {
       const foodIndex = rem.indexOf(food1);
       rem.splice(foodIndex, 1); // Remove the chosen food1 from rem
       // filter values that food1 cant vote anymore

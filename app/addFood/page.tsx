@@ -1,12 +1,10 @@
 import CreateFood from "@/components/CreateFood";
 import "../globals.css";
-import { AuthProvider, useAuth } from "../authContext";
-// import Link from "next/link";
+import { AuthProvider  } from "../authContext";
 const AddFood = () => {
   return (
     <AuthProvider>
-        <CreateFood />
-
+      <CreateFood />
     </AuthProvider>
   );
 };
