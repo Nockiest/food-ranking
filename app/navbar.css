@@ -1,0 +1,59 @@
+/* @import "../variables.css"; */
+/*
+.navbar {
+  @apply flex   items-center justify-between sticky top-0 border border-gray-300 shadow-md z-50   py-2 bg-white;
+}
+
+h1 {
+  @apply absolute left-1/2 transform -translate-x-1/2 text-center border-6 border-black py-4 px-8 rounded-2xl border-primary-color font-bold;
+}
+
+
+
+@media (max-width: 800px) {
+  h1 {
+    @apply hidden;
+  }
+} */
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    left: 0;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    padding:  8px 64px;
+    background-color: white;
+    width: 100%;
+    margin: 0
+  }
+
+ .navbar >  h1 {
+    position: absolute;
+
+    left: 50%;
+    transform: translate(-50%,  0%);
+    text-align:center;
+    border: solid 6px black;
+    padding: 16px;
+    border-radius: 8px;
+    border-color:  var(--primary-color);
+
+    font-weight: 900;
+  }
+
+  img {
+    height: 55px;
+    width: 55px;
+    color:  var(--primary-color)
+  }
+
+  @media (max-width: 800px) {
+    h1 {
+      display: none;
+    }
+  }

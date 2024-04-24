@@ -1,0 +1,54 @@
+@import "../variables.css";
+
+.input-field-row {
+  display: flex;
+  /* width: 337px; */
+  /* padding: 8px 16px; */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* gap: 38px; */
+}
+
+
+  .input-field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .input-field {
+    min-width: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+ 
+
+  .input-field input {
+   height:24px;
+  }
+
+  #description {
+    resize: vertical;
+    min-height: 30px;
+    max-height: 150px;
+    min-width: 55%;
+  }
+
+  .preview-image{
+    min-height: 100px;
+    min-width: 150px;
+  }
+  .add-form{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+     /* max-width: 400px;   */
+    margin: 8px;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 38px;
+  }
