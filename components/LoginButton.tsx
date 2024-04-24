@@ -10,11 +10,8 @@ import { useAuth } from "@/app/authContext";
 interface LoginButtonProps {}
 
 const LoginButton: React.FC<LoginButtonProps> = () => {
-  // const [user, setUser] = useState<User | null>(auth.currentUser);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const {userLoggedIn,currentUser,  } = useAuth()
-
-  const [key, setKey] = useState(0)
+  const { userLoggedIn, currentUser } = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -28,27 +25,41 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
   };
 
   return (
-    <div key={key} className="loginSection">
-      {!userLoggedIn ? (
-        <div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <GoogleButton label="Přihlášení" onClick={signInWithGoogle} />
-        </div>
-      ) : (
+    <div className="flex items-center">
+      <div className="loginSection">
+        {!userLoggedIn ? (
+          <div className="flex flex-row">
+            {currentUser && currentUser.photoURL ? (
+              <div className="mr-4">
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={currentUser?.photoURL ? currentUser.photoURL : undefined}
+                  alt="Profile"
+                />
+              </div>
+            ) : (
+              <p>no pic</p>
+            )}
+            <div>
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              <GoogleButton label="Přihlášení" onClick={signInWithGoogle} />
+            </div>
+          </div>
+        ) : (
           <button
             className="bg-white text-black rounded-md px-4 py-2"
             onClick={handleSignOut}
           >
             Log Out
           </button>
-   
-      )}
+        )}
 
-      {currentUser && (
-        <p className="text-center bg-gray-200 rounded-md p-2 mt-2">
-          Přihlášen jako: {currentUser.displayName}
-        </p>
-      )}
+        {currentUser && (
+          <p className="text-center bg-gray-200 rounded-md p-2 mt-2">
+            Přihlášen jako: {currentUser.displayName}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

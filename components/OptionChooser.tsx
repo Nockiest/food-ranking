@@ -99,14 +99,10 @@ const OptionChooser = () => {
       const foodIndex = rem.indexOf(food1);
       rem.splice(foodIndex, 1); // Remove the chosen food1 from rem
       // filter values that food1 cant vote anymore
-      if (votingAccount.votedFoods[food1.name]) {
+      if (votingAccount.votedFoods[food1.name as string]) {
          rem.filter((food) => {
-          console.log(
-            votingAccount.votedFoods[food1.name],
-            votingAccount.votedFoods[food1.name]?.indexOf(food)
-          );
-          votingAccount.votedFoods[food1.name]
-            ? votingAccount.votedFoods[food1.name].indexOf(food) !== -1
+          votingAccount.votedFoods[food1.name as string]
+            ? votingAccount.votedFoods[food1.name as string].indexOf(food) !== -1
             : true;
         });
       }
@@ -172,7 +168,6 @@ const OptionChooser = () => {
         <button
           className="btn-primary"
           onClick={() => {
-            // console.log(undecidedFoods);
             const undecide = getFoodsWithUndecidedVotes();
             getNewFoods(undecide);
           }}
