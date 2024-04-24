@@ -29,17 +29,16 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
       <div className="loginSection">
         {!userLoggedIn ? (
           <div className="flex flex-row">
-            {currentUser && currentUser.photoURL ? (
+          
               <div className="mr-4">
                 <img
-                  className="w-10 h-10 rounded-full"
-                  src={currentUser?.photoURL ? currentUser.photoURL : undefined}
+                  className="w-10 h-10 rounded-full border-black"
+                  src={currentUser?.photoURL || undefined }
                   alt="Profile"
+                  referrerPolicy="no-referrer"
                 />
               </div>
-            ) : (
-              <p>no pic</p>
-            )}
+         
             <div>
               {errorMessage && <p className="error-message">{errorMessage}</p>}
               <GoogleButton label="Přihlášení" onClick={signInWithGoogle} />

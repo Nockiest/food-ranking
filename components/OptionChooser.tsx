@@ -206,7 +206,7 @@ const OptionChooser = () => {
           <div className="flex mt-6 flex-row justify-center align-center">
             {rivalFoods.map((food, index) =>
               food ? (
-                <Grid item xs={4} sm={4} md={4} key={index}>
+                <Grid container   key={index} spacing={2} columns={{ xs: 1, sm: 1, md: 1 }} >
                   <Choice
                     food={food}
                     handleClick={() => {

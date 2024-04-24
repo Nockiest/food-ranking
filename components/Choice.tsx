@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { Paper } from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 import Image from "next/image";
 import { Food } from "@/types/types";
-import placeholderIMG from '../public/ImagePlaceholder.png'
+import placeholderIMG from "../public/ImagePlaceholder.png";
 interface ChoiceProps {
   handleClick: (image: string) => void;
   food: Food;
@@ -11,8 +11,6 @@ interface ChoiceProps {
 
 function Choice({ food, handleClick }: ChoiceProps) {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
-
-
 
   useEffect(() => {
     if (food?.imageId) {
@@ -26,20 +24,20 @@ function Choice({ food, handleClick }: ChoiceProps) {
           console.error("Error retrieving image:", error);
         });
     }
-  }, [food ]);
+  }, [food]);
 
-  const {   name, votes, tags } = food;
+  const { name, votes, tags } = food;
   const percentRating = ((votes.won / votes.total) * 100).toFixed(2);
 
-
   return (
-    <Paper
-      className="select-none m-2 p-2 flex flex-col items-start justify-center  cursor-pointer hover:shadow-lg"
-      onClick={() => handleClick(name)}
-    >
-      <div className={"w-60 h-60 mx-auto"} style={{ position: "relative" }}>
+    <Grid item xs={6}  sm={ 4}  md={ 4}  >
+      <Paper
+        className="select-none md:m-2  md:p-2 flex flex-col items-start justify-center  cursor-pointer hover:shadow-lg"
+        onClick={() => handleClick(name)}
+      >
+        <div className={"w-60 h-60 mx-auto"} style={{ position: "relative" }}>
           <Image
-            src={imageDataUrl? imageDataUrl : placeholderIMG}
+            src={imageDataUrl ? imageDataUrl : placeholderIMG}
             alt={name}
             layout="fill"
             className={"select-none"}
@@ -47,22 +45,24 @@ function Choice({ food, handleClick }: ChoiceProps) {
             objectFit="contain"
             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60DZ5wAAAABJRU5ErkJggg=="
           />
-      </div>
-      <h2 className="font-bold text-2xl">{name}</h2>
+        </div>
+        <h2 className="font-bold text-2xl">{name}</h2>
 
-      <p>description</p>
-      {tags.map((tag) => (
-        <p key={tag.name} style={{ color: tag.color }}>
-          {tag.name}
-        </p>
-      ))}
+        <p>description</p>
+        {tags.map((tag) => (
+          <p key={tag.name} style={{ color: tag.color }}>
+            {tag.name}
+          </p>
+        ))}
 
-      <div className="flex justify-end">
-        <div className="text-end">Jídlo vyhrálo {percentRating}% voleb z {votes.total}</div>
-      </div>
-    </Paper>
+        <div className="flex justify-end">
+          <div className="text-end">
+            Jídlo vyhrálo {percentRating}% voleb z {votes.total}
+          </div>
+        </div>
+      </Paper>
+    </Grid>
   );
 }
 
 export default Choice;
-
